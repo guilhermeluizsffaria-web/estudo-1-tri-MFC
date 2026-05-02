@@ -1,0 +1,1700 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f1923">
+<title>MFC R1 — Revisão 1º Trimestre</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* fonts loaded via <link> tag */
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--bg:#0f1923;--bg2:#162230;--bg3:#1d2e3f;--bg4:#25384c;
+--fg:#e8edf2;--fg2:#a3b4c6;--fg3:#6b8299;
+--acc:#3ecf8e;--acc2:#2ba36e;--acc3:#1a7a4f;
+--warn:#f5a623;--err:#e84855;--info:#4da6ff;
+--card:rgba(22,34,48,0.85);
+--radius:12px;--radius-sm:8px;
+}
+html{font-size:15px;scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--fg);min-height:100dvh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at 20% 0%,rgba(62,207,142,.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(77,166,255,.04) 0%,transparent 60%);pointer-events:none;z-index:0}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(15,25,35,.92);backdrop-filter:blur(20px);border-top:1px solid rgba(62,207,142,.15);display:flex;padding:6px 8px env(safe-area-inset-bottom,8px)}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border:none;background:none;color:var(--fg3);font-size:.65rem;font-family:inherit;cursor:pointer;transition:.2s;border-radius:var(--radius-sm);letter-spacing:.3px}
+.nav-btn.active{color:var(--acc)}
+.nav-btn.active .nav-icon{background:rgba(62,207,142,.12)}
+.nav-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;transition:.2s}
+
+/* SECTIONS */
+.section{display:none;padding:16px 16px 100px;position:relative;z-index:1;max-width:720px;margin:0 auto}
+.section.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.section-title{font-family:'DM Serif Display',serif;font-size:1.6rem;margin-bottom:4px;background:linear-gradient(135deg,var(--fg),var(--acc));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.section-sub{color:var(--fg3);font-size:.8rem;margin-bottom:20px}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius);padding:16px;margin-bottom:12px;backdrop-filter:blur(8px);transition:.2s}
+.card:hover{border-color:rgba(62,207,142,.2)}
+.card-title{font-weight:600;font-size:.95rem;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card-body{color:var(--fg2);font-size:.85rem;line-height:1.6}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:600;letter-spacing:.3px}
+.badge-green{background:rgba(62,207,142,.15);color:var(--acc)}
+.badge-yellow{background:rgba(245,166,35,.15);color:var(--warn)}
+.badge-red{background:rgba(232,72,85,.15);color:var(--err)}
+.badge-blue{background:rgba(77,166,255,.15);color:var(--info)}
+
+/* PROGRESS */
+.progress-bar{height:4px;background:var(--bg4);border-radius:4px;overflow:hidden;margin:8px 0}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--acc),var(--info));border-radius:4px;transition:width .5s ease}
+
+/* BUTTONS */
+.btn{border:none;border-radius:var(--radius-sm);padding:10px 18px;font-family:inherit;font-size:.85rem;font-weight:600;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--acc);color:#0f1923}
+.btn-primary:hover{background:var(--acc2)}
+.btn-secondary{background:var(--bg4);color:var(--fg)}
+.btn-secondary:hover{background:rgba(255,255,255,.12)}
+.btn-sm{padding:6px 12px;font-size:.75rem}
+.btn-block{width:100%;justify-content:center}
+
+/* STUDY SCHEDULE */
+.schedule-day{display:flex;gap:12px;align-items:flex-start;margin-bottom:16px;position:relative}
+.schedule-marker{width:32px;height:32px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0;border:2px solid var(--bg4);position:relative;z-index:1}
+.schedule-marker.done{background:var(--acc3);border-color:var(--acc);color:var(--acc)}
+.schedule-marker.current{border-color:var(--acc);color:var(--acc);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(62,207,142,.3)}50%{box-shadow:0 0 0 8px rgba(62,207,142,0)}}
+.schedule-line{position:absolute;left:31px;top:32px;bottom:-16px;width:2px;background:var(--bg4)}
+.schedule-content{flex:1;min-width:0}
+.schedule-content h4{font-size:.85rem;margin-bottom:4px}
+.schedule-content p{font-size:.78rem;color:var(--fg3);line-height:1.5}
+
+/* CONTENT READER */
+.topic-list .card{cursor:pointer}
+.topic-list .card:active{transform:scale(.98)}
+.reader{display:none}
+.reader.active{display:block}
+.reader-back{display:flex;align-items:center;gap:6px;color:var(--acc);font-size:.85rem;cursor:pointer;margin-bottom:16px;background:none;border:none;font-family:inherit}
+.reader-content{line-height:1.75;color:var(--fg2);font-size:.88rem}
+.reader-content h2{font-family:'DM Serif Display',serif;font-size:1.3rem;color:var(--fg);margin:24px 0 10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.reader-content h3{font-size:1rem;color:var(--acc);margin:18px 0 8px;font-weight:600}
+.reader-content strong{color:var(--fg);font-weight:600}
+.reader-content .highlight{background:rgba(62,207,142,.1);border-left:3px solid var(--acc);padding:10px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:12px 0}
+.reader-content .alert{background:rgba(232,72,85,.08);border-left:3px solid var(--err);padding:10px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:12px 0}
+.reader-content .info-box{background:rgba(77,166,255,.08);border-left:3px solid var(--info);padding:10px 14px;border-radius:0 var(--radius-sm) var(--radius-sm) 0;margin:12px 0}
+.reader-content table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.8rem}
+.reader-content th{background:var(--bg4);padding:8px;text-align:left;font-weight:600;border:1px solid rgba(255,255,255,.08)}
+.reader-content td{padding:8px;border:1px solid rgba(255,255,255,.06)}
+.reader-content code{font-family:'JetBrains Mono',monospace;background:var(--bg4);padding:1px 5px;border-radius:4px;font-size:.82em}
+.reader-content ul,.reader-content ol{padding-left:20px;margin:8px 0}
+.reader-content li{margin-bottom:4px}
+
+/* FLASHCARDS */
+.flashcard-container{perspective:1200px;margin:20px 0}
+.flashcard{width:100%;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .5s ease}
+.flashcard.flipped{transform:rotateY(180deg)}
+.flashcard-face{position:absolute;inset:0;border-radius:var(--radius);padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;backface-visibility:hidden;border:1px solid rgba(255,255,255,.08)}
+.flashcard-front{background:linear-gradient(135deg,var(--bg3),var(--bg2))}
+.flashcard-back{background:linear-gradient(135deg,rgba(62,207,142,.08),var(--bg2));transform:rotateY(180deg);overflow-y:auto}
+.flashcard-category{font-size:.7rem;text-transform:uppercase;letter-spacing:1px;color:var(--acc);margin-bottom:12px;font-weight:600}
+.flashcard-question{font-family:'DM Serif Display',serif;font-size:1.15rem;line-height:1.5}
+.flashcard-answer{font-size:.88rem;line-height:1.7;color:var(--fg2);text-align:left;width:100%}
+.flashcard-controls{display:flex;gap:8px;margin-top:16px;justify-content:center}
+.flashcard-counter{text-align:center;color:var(--fg3);font-size:.8rem;margin-top:12px}
+.fc-nav{display:flex;gap:8px;justify-content:center;margin-top:12px}
+
+/* QUIZ */
+.quiz-option{display:block;width:100%;text-align:left;padding:14px 16px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);border-radius:var(--radius-sm);margin-bottom:8px;color:var(--fg2);font-size:.85rem;font-family:inherit;cursor:pointer;transition:.2s;line-height:1.5}
+.quiz-option:hover{border-color:rgba(62,207,142,.3)}
+.quiz-option.selected{border-color:var(--info);background:rgba(77,166,255,.08)}
+.quiz-option.correct{border-color:var(--acc);background:rgba(62,207,142,.1);color:var(--fg)}
+.quiz-option.wrong{border-color:var(--err);background:rgba(232,72,85,.08)}
+.quiz-explanation{margin-top:16px;padding:16px;background:rgba(62,207,142,.05);border:1px solid rgba(62,207,142,.15);border-radius:var(--radius-sm);font-size:.85rem;line-height:1.7;color:var(--fg2);display:none}
+.quiz-case{background:var(--bg3);padding:14px;border-radius:var(--radius-sm);margin-bottom:16px;font-size:.85rem;line-height:1.6;color:var(--fg2);border-left:3px solid var(--info)}
+.quiz-score{display:flex;gap:16px;justify-content:center;margin:20px 0}
+.quiz-score-item{text-align:center}
+.quiz-score-item .num{font-family:'DM Serif Display',serif;font-size:2rem}
+.quiz-score-item .label{font-size:.7rem;color:var(--fg3);text-transform:uppercase;letter-spacing:.5px}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:12px;margin-bottom:12px;-webkit-overflow-scrolling:touch}
+.filter-tabs::-webkit-scrollbar{display:none}
+.filter-tab{white-space:nowrap;padding:6px 14px;border-radius:20px;background:var(--bg3);border:1px solid rgba(255,255,255,.06);color:var(--fg3);font-size:.75rem;font-family:inherit;cursor:pointer;transition:.2s;font-weight:500}
+.filter-tab.active{background:rgba(62,207,142,.15);border-color:rgba(62,207,142,.3);color:var(--acc)}
+
+/* CHECKBOX */
+.check-item{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;font-size:.85rem}
+.check-box{width:20px;height:20px;border:2px solid var(--fg3);border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.2s}
+.check-item.checked .check-box{background:var(--acc);border-color:var(--acc);color:#0f1923}
+.check-item.checked{color:var(--fg3);text-decoration:line-through}
+
+/* RESPONSIVE */
+@media(min-width:600px){
+.section{padding:24px 24px 100px}
+.flashcard{min-height:320px}
+}
+</style>
+</head>
+<body>
+
+
+<!-- LOGIN -->
+<div id="loginScreen" style="position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:20px">
+<div style="text-align:center;max-width:320px;width:100%">
+<div style="font-size:2.5rem;margin-bottom:8px">🩺</div>
+<h1 style="font-family:'DM Serif Display',serif;font-size:1.5rem;margin-bottom:4px;color:var(--fg)">MFC R1</h1>
+<p style="color:var(--fg3);font-size:.8rem;margin-bottom:24px">Revisão 1º Trimestre — ESP-DF</p>
+<input type="password" id="loginPass" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')tryLogin()" style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:var(--bg3);color:var(--fg);font-family:inherit;font-size:.9rem;outline:none;margin-bottom:12px">
+<button onclick="tryLogin()" class="btn btn-primary btn-block">Entrar</button>
+<p id="loginError" style="color:var(--err);font-size:.8rem;margin-top:10px;display:none">Senha incorreta</p>
+</div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+<button class="nav-btn active" onclick="showSection('cronograma')"><span class="nav-icon">📅</span>Cronograma</button>
+<button class="nav-btn" onclick="showSection('conteudo')"><span class="nav-icon">📖</span>Conteúdo</button>
+<button class="nav-btn" onclick="showSection('flashcards')"><span class="nav-icon">🧠</span>Flashcards</button>
+<button class="nav-btn" onclick="showSection('questoes')"><span class="nav-icon">✍️</span>Questões</button>
+<button class="nav-btn" onclick="showSection('progresso')"><span class="nav-icon">📊</span>Progresso</button>
+</nav>
+
+<!-- CRONOGRAMA -->
+<div id="cronograma" class="section active">
+<h1 class="section-title">Cronograma de Estudo</h1>
+<p class="section-sub">Revisão espaçada para o 1º trimestre • MFC R1 ESP-DF</p>
+
+<div style="margin-bottom:20px">
+<div class="card" style="background:linear-gradient(135deg,rgba(62,207,142,.08),var(--card))">
+<div class="card-title">📊 Seu progresso geral</div>
+<div class="progress-bar" style="height:6px"><div class="progress-fill" id="globalProgress" style="width:0%"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:.75rem;color:var(--fg3);margin-top:4px">
+<span id="globalProgressText">0 de 11 temas estudados</span>
+<span id="globalProgressPct">0%</span>
+</div>
+</div>
+</div>
+
+<div id="scheduleList"></div>
+</div>
+
+<!-- CONTEÚDO -->
+<div id="conteudo" class="section">
+<div id="topicListView">
+<h1 class="section-title">Conteúdo Teórico</h1>
+<p class="section-sub">Toque em um tema para estudar o conteúdo aprofundado</p>
+<div class="filter-tabs" id="contentFilters"></div>
+<div id="topicCards" class="topic-list"></div>
+</div>
+<div id="readerView" class="reader">
+<button class="reader-back" onclick="closeReader()">← Voltar aos temas</button>
+<div id="readerContent" class="reader-content"></div>
+</div>
+</div>
+
+<!-- FLASHCARDS -->
+<div id="flashcards" class="section">
+<h1 class="section-title">Flashcards</h1>
+<p class="section-sub">Toque no card para virar • Deslize para navegar</p>
+<div class="filter-tabs" id="fcFilters"></div>
+<div class="flashcard-container">
+<div class="flashcard" id="flashcard" onclick="flipCard()">
+<div class="flashcard-face flashcard-front">
+<div class="flashcard-category" id="fcCategory"></div>
+<div class="flashcard-question" id="fcQuestion"></div>
+</div>
+<div class="flashcard-face flashcard-back">
+<div class="flashcard-category" id="fcCategoryBack"></div>
+<div class="flashcard-answer" id="fcAnswer"></div>
+</div>
+</div>
+</div>
+<div class="flashcard-counter" id="fcCounter"></div>
+<div class="fc-nav">
+<button class="btn btn-secondary" onclick="prevCard()">← Anterior</button>
+<button class="btn btn-secondary" onclick="shuffleCards()">🔀 Embaralhar</button>
+<button class="btn btn-primary" onclick="nextCard()">Próximo →</button>
+</div>
+</div>
+
+<!-- QUESTÕES -->
+<div id="questoes" class="section">
+<h1 class="section-title">Banco de Questões</h1>
+<p class="section-sub">Questões com casos clínicos contextualizados</p>
+<div class="filter-tabs" id="quizFilters"></div>
+<div id="quizArea"></div>
+</div>
+
+<!-- PROGRESSO -->
+<div id="progresso" class="section">
+<h1 class="section-title">Meu Progresso</h1>
+<p class="section-sub">Acompanhe seu desempenho e revisões</p>
+<div id="progressStats"></div>
+<div style="margin-top:20px">
+<button class="btn btn-secondary btn-block" onclick="resetProgress()">🗑️ Resetar todo o progresso</button>
+</div>
+</div>
+
+<script>
+
+function tryLogin(){
+const p=document.getElementById('loginPass').value;
+if(p==='gugu4519'){
+document.getElementById('loginScreen').style.display='none';
+localStorage.setItem('mfc_r1_auth','1');
+}else{
+document.getElementById('loginError').style.display='block';
+document.getElementById('loginPass').value='';
+}
+}
+if(localStorage.getItem('mfc_r1_auth')==='1'){
+document.addEventListener('DOMContentLoaded',()=>{const l=document.getElementById('loginScreen');if(l)l.style.display='none';});
+}
+
+// ═══════════════════════════════════════
+// DATA: TOPICS
+// ═══════════════════════════════════════
+const TOPICS = [
+{
+id:'epidemio',
+title:'Epidemiologia e Rastreamentos',
+icon:'📊',
+area:'Epidemiologia',
+content:`
+<h2>Epidemiologia e Rastreamentos na APS</h2>
+
+<h3>1. Conceitos Fundamentais</h3>
+<p><strong>Epidemiologia</strong> é o estudo da distribuição e dos determinantes de estados ou eventos relacionados à saúde em populações específicas, e a aplicação desse estudo para controle de problemas de saúde. O pressuposto central é que os fenômenos de saúde-doença <strong>não ocorrem ao acaso</strong> nas populações.</p>
+
+<p><strong>Epidemiologia clínica</strong> representa o casamento entre métodos quantitativos populacionais e a tomada de decisão em casos individuais na prática diária.</p>
+
+<h3>2. Medidas de Frequência</h3>
+<div class="highlight">
+<strong>Prevalência</strong> = nº de eventos existentes / nº total de indivíduos observados (estudo transversal).<br>
+<strong>Incidência</strong> = nº de eventos novos / nº total de indivíduos observados em risco (estudo de coorte).
+</div>
+<p>A prevalência é influenciada pela incidência e pela duração da doença. Doenças crônicas de longa duração tendem a ter alta prevalência mesmo com baixa incidência.</p>
+
+<h3>3. Validade dos Testes Diagnósticos</h3>
+<table>
+<tr><th>Conceito</th><th>Definição</th><th>Fórmula</th></tr>
+<tr><td><strong>Sensibilidade</strong></td><td>Probabilidade de teste positivo em doentes</td><td>VP / (VP + FN)</td></tr>
+<tr><td><strong>Especificidade</strong></td><td>Probabilidade de teste negativo em sadios</td><td>VN / (VN + FP)</td></tr>
+<tr><td><strong>VPP</strong></td><td>Probabilidade de doença dado teste positivo</td><td>VP / (VP + FP)</td></tr>
+<tr><td><strong>VPN</strong></td><td>Probabilidade de ausência de doença dado teste negativo</td><td>VN / (VN + FN)</td></tr>
+</table>
+
+<div class="info-box">
+<strong>Macete clínico:</strong> Teste com alta <strong>sensibilidade</strong> é bom para <strong>rastreamento</strong> (SnOUT — Se negativo, exclui). Teste com alta <strong>especificidade</strong> é bom para <strong>confirmação</strong> (SpIN — Se positivo, confirma).
+</div>
+
+<h3>4. Rastreamento</h3>
+<p>Ação dirigida à população <strong>assintomática</strong>, na fase subclínica, com intuito de reduzir mortalidade e morbidade. O rastreamento NÃO é diagnóstico — requer exame confirmatório (ex: mamografia → biópsia).</p>
+
+<p><strong>Critérios para rastreamento (Wilson & Jungner):</strong></p>
+<ul>
+<li>Doença deve ser importante problema de saúde pública</li>
+<li>História natural bem conhecida</li>
+<li>Estágio pré-clínico (assintomático) bem definido</li>
+<li>Detecção e tratamento precoce trazem benefício superior ao tratamento habitual</li>
+<li>Testes disponíveis, aceitáveis e confiáveis</li>
+<li>Custo razoável e compatível</li>
+<li>Processo contínuo e sistemático</li>
+</ul>
+
+<p><strong>Rastreamento oportunístico vs. organizado:</strong></p>
+<ul>
+<li><strong>Oportunístico:</strong> aproveita o momento da consulta para rastrear; menor impacto em morbimortalidade; mais oneroso.</li>
+<li><strong>Organizado:</strong> alcance populacional, garante os passos seguintes (diagnóstico + tratamento); ex: câncer de colo uterino.</li>
+</ul>
+
+<h3>5. Vieses em Estudos de Rastreamento</h3>
+<ul>
+<li><strong>Viés de tempo de antecipação (lead-time bias):</strong> detecta doença mais cedo sem mudar o desfecho, criando falsa impressão de aumento de sobrevida.</li>
+<li><strong>Viés de tempo de duração (length bias):</strong> rastreamento detecta preferencialmente formas de progressão lenta (prognóstico melhor), superestimando o benefício.</li>
+<li><strong>Viés do voluntário saudável:</strong> quem participa do rastreamento tende a ser mais saudável e engajado em saúde.</li>
+<li><strong>Sobrediagnóstico (overdiagnosis):</strong> detecção de doenças que nunca causariam sintomas nem morte — principal dano do rastreamento.</li>
+</ul>
+
+<h3>6. Níveis de Prevenção (Leavell & Clark + Jamoulle)</h3>
+<table>
+<tr><th>Nível</th><th>Fase</th><th>Exemplos</th></tr>
+<tr><td><strong>Primária</strong></td><td>Pré-patogênica</td><td>Vacinação, atividade física, cessação do tabagismo</td></tr>
+<tr><td><strong>Secundária</strong></td><td>Patogênica subclínica</td><td>Rastreamento de CA mama, HAS, DM</td></tr>
+<tr><td><strong>Terciária</strong></td><td>Doença instalada</td><td>Reabilitação, limitação de incapacidade</td></tr>
+<tr><td><strong>Quaternária</strong></td><td>Todas as fases</td><td>Proteção contra intervenções desnecessárias (iatrogenia)</td></tr>
+</table>
+
+<div class="highlight">
+<strong>Prevenção Quaternária (Jamoulle):</strong> identificar o paciente em risco de medicalização excessiva, protegê-lo de intervenções desnecessárias e propor alternativas eticamente aceitáveis. Princípio: <em>primum non nocere</em>.
+</div>
+
+<h3>7. Abordagem de Alto Risco vs. Populacional (Rose)</h3>
+<p><strong>Alto risco:</strong> seleciona grupo de alto risco para medida preventiva — mais eficiente individualmente, mas menor impacto populacional.</p>
+<p><strong>Populacional:</strong> atua sobre toda a população — grande alcance, mas oferece poucos benefícios para cada indivíduo (<strong>paradoxo da prevenção</strong>).</p>
+`
+},
+{
+id:'aps_mfc',
+title:'Princípios da APS e MFC',
+icon:'🏥',
+area:'APS/MFC',
+content:`
+<h2>Princípios da Atenção Primária à Saúde e da MFC</h2>
+
+<h3>1. Definição de APS (OMS / Alma-Ata / Astana)</h3>
+<p>A APS é o primeiro nível de contato do indivíduo, da família e da comunidade com o sistema de saúde. Deve ser acessível, abrangente, coordenada e continuada, servindo de porta de entrada preferencial ao sistema.</p>
+
+<h3>2. Atributos Essenciais da APS (Barbara Starfield)</h3>
+<ul>
+<li><strong>Acesso de primeiro contato (porta de entrada):</strong> a equipe de APS deve ser o primeiro recurso buscado quando há necessidade de saúde. Exige acessibilidade geográfica, temporal e cultural.</li>
+<li><strong>Longitudinalidade:</strong> acompanhamento ao longo do tempo independente de doença. Cria vínculo e conhecimento acumulado sobre a pessoa, favorecendo diagnósticos mais acurados e redução de custos.</li>
+<li><strong>Integralidade:</strong> reconhecimento do espectro completo de necessidades, incluindo promoção, prevenção, cura e reabilitação. Envolve oferta de serviços e encaminhamento quando necessário.</li>
+<li><strong>Coordenação do cuidado:</strong> integração de todas as ações e informações, garantindo continuidade quando o usuário transita entre diferentes níveis. A equipe de APS atua como coordenadora do percurso na rede.</li>
+</ul>
+
+<h3>3. Atributos Derivados</h3>
+<ul>
+<li><strong>Orientação familiar:</strong> uso de ferramentas como genograma e ecomapa para compreender o contexto familiar e planejar cuidados.</li>
+<li><strong>Orientação comunitária:</strong> conhecimento do perfil epidemiológico e social do território; planejamento de ações coletivas baseadas nas necessidades locais.</li>
+<li><strong>Competência cultural:</strong> reconhecimento e respeito às diferentes culturas presentes na comunidade, adaptando abordagens.</li>
+</ul>
+
+<h3>4. Princípios da MFC (WONCA)</h3>
+<div class="highlight">
+<ul>
+<li>Ser o médico de primeiro contato, porta de entrada do sistema</li>
+<li>Desenvolver abordagem centrada na pessoa (MCCP)</li>
+<li>Usar a consulta como ferramenta terapêutica</li>
+<li>Orientar-se pela família e pela comunidade</li>
+<li>Coordenar o cuidado na rede de atenção</li>
+<li>Atuar com base em evidências científicas adaptadas ao contexto da APS</li>
+<li>Ter habilidades específicas para resolver >80% dos problemas</li>
+</ul>
+</div>
+
+<h3>5. Método Clínico Centrado na Pessoa (MCCP)</h3>
+<p>O MCCP propõe que a consulta explore <strong>duas dimensões simultaneamente:</strong></p>
+<ul>
+<li><strong>Agenda do médico (disease):</strong> diagnóstico biomédico, sinais, exames</li>
+<li><strong>Agenda do paciente (illness):</strong> experiência da doença — sentimentos, ideias, funcionalidade, expectativas (SIFE/FIFE)</li>
+</ul>
+
+<p>Compreender a pessoa como um todo implica avaliar o contexto proximal (família, trabalho, suporte social) e distal (cultura, comunidade, estruturas sociais). Ferramentas como genograma e ecomapa auxiliam nesse mapeamento.</p>
+
+<h3>6. Prevenção Quaternária na Prática</h3>
+<p>Na APS, a prevenção quaternária se manifesta ao:</p>
+<ul>
+<li>Evitar exames desnecessários em queixas autolimitadas</li>
+<li>Ponderar risco-benefício de cada intervenção</li>
+<li>Proteger o paciente da cascata diagnóstica</li>
+<li>Utilizar "espera vigilante" (watchful waiting) como ferramenta</li>
+<li>Desmistificar achados incidentais e evitar rótulos diagnósticos desnecessários</li>
+</ul>
+`
+},
+{
+id:'consulta7',
+title:'Consulta em 7 Passos',
+icon:'🩺',
+area:'APS/MFC',
+content:`
+<h2>A Consulta em 7 Passos</h2>
+<p>Modelo sistematizado da consulta médica na APS, baseado no artigo de Ramos (2009) e alinhado ao MCCP. Organiza a consulta em etapas complementares.</p>
+
+<h3>Passo 1 — Preparação</h3>
+<p>Ocorre <strong>antes</strong> da consulta propriamente dita. Inclui revisão do prontuário, resultados de exames pendentes, histórico de atendimentos anteriores e contexto familiar. Permite ao médico antecipar demandas e otimizar o tempo.</p>
+
+<h3>Passo 2 — Acolhimento e Abertura</h3>
+<p>Primeiros 30-60 segundos são decisivos. Cumprimentar pelo nome, postura aberta, contato visual. Pergunta aberta inicial: <em>"O que o traz aqui hoje?"</em> Escuta ativa sem interromper — os primeiros 2 minutos definem a qualidade da consulta.</p>
+<div class="highlight"><strong>Chave:</strong> Identificar TODOS os motivos de consulta nesta fase. O paciente médio tem 1,6 motivos por consulta, mas frequentemente menciona os mais importantes depois ("oh, e outra coisa...").</div>
+
+<h3>Passo 3 — Exploração / Coleta de Dados</h3>
+<p>Recolha, análise e contextualização de informação subjetiva e objetiva, tanto biomédica quanto psicossociocultural. Integra:</p>
+<ul>
+<li>Anamnese dirigida (HDA, HMP, medicamentos)</li>
+<li>Exame físico orientado</li>
+<li>Exploração da agenda do paciente (SIFE/FIFE)</li>
+<li>Contextualização familiar e social</li>
+</ul>
+
+<h3>Passo 4 — Avaliação / Formulação Diagnóstica</h3>
+<p>Integrar informações em um quadro interpretativo que concilie:</p>
+<ul>
+<li>Racionalidade técnico-científica (disease)</li>
+<li>Explicações que façam sentido para o paciente (illness)</li>
+</ul>
+<p>Formular diagnósticos, explicar ao paciente com linguagem acessível, estabelecer prognóstico e avaliar impactos na funcionalidade.</p>
+
+<h3>Passo 5 — Plano de Cuidados e Prevenção</h3>
+<p>Propostas, negociação e acordo sobre ações e objetivos. Inclui:</p>
+<ul>
+<li>Exames auxiliares diagnósticos e/ou terapêuticos</li>
+<li>Participação ativa do paciente</li>
+<li>Modificações comportamentais</li>
+<li>Prevenção e promoção da saúde oportunísticas</li>
+</ul>
+<div class="info-box"><strong>Decisão compartilhada:</strong> o plano não é imposto — é construído com o paciente, respeitando seus valores e possibilidades. A adesão melhora quando o paciente participa ativamente.</div>
+
+<h3>Passo 6 — Encerramento</h3>
+<p>Resumir o que foi acordado, verificar compreensão ("o que entendeu sobre...?"), agendar retorno, deixar porta aberta para dúvidas. A "contaminação da consulta" (motivos de última hora) deve ser prevenida com boa abertura no passo 2.</p>
+
+<h3>Passo 7 — Reflexão e Registro</h3>
+<p>Após a saída do paciente: registro adequado em prontuário (SOAP), reflexão sobre a consulta, identificação de pontos de melhoria e gatilhos para próximo encontro.</p>
+`
+},
+{
+id:'sono',
+title:'Perturbações do Sono',
+icon:'🌙',
+area:'Clínica',
+content:`
+<h2>Perturbações do Sono na APS</h2>
+
+<h3>1. Definição e Critérios de Insônia</h3>
+<p>A insônia é definida como dificuldade persistente de iniciar o sono, mantê-lo, ou despertar mais cedo que o desejado, resultando em comprometimento diurno significativo, mesmo havendo oportunidade adequada para dormir.</p>
+
+<p><strong>Classificação temporal:</strong></p>
+<ul>
+<li><strong>Insônia aguda:</strong> duração inferior a 3 meses, frequentemente relacionada a estressores identificáveis</li>
+<li><strong>Insônia crônica:</strong> sintomas ≥3 meses, frequência mínima de 3x/semana — diagnóstico mais relevante na APS</li>
+</ul>
+
+<p><strong>Classificação por horário:</strong></p>
+<ul>
+<li><strong>Inicial:</strong> dificuldade em adormecer (latência >30 min)</li>
+<li><strong>De manutenção:</strong> despertares noturnos frequentes</li>
+<li><strong>Terminal:</strong> despertar precoce sem retornar ao sono</li>
+</ul>
+
+<h3>2. Avaliação</h3>
+<ul>
+<li><strong>Diário do sono:</strong> registro por 2+ semanas de horários, latência, despertares, qualidade subjetiva</li>
+<li><strong>Actigrafia:</strong> sensor de punho que avalia padrão sono-vigília ao longo de dias/semanas</li>
+<li><strong>Polissonografia:</strong> não é rotina para insônia — indicada na suspeita de SAOS, movimentos periódicos dos membros ou parassonias</li>
+<li><strong>Exames complementares:</strong> TSH, ferritina (síndrome das pernas inquietas), perfil hepático, glicemia quando indicados</li>
+</ul>
+
+<h3>3. Tratamento Não Farmacológico — TCC para Insônia (TCC-I)</h3>
+<div class="highlight"><strong>A TCC-I é o tratamento de primeira linha para insônia crônica</strong>, com nível de evidência I e eficácia sustentada em longo prazo, superior aos benzodiazepínicos.</div>
+
+<p><strong>Componentes:</strong></p>
+<ul>
+<li><strong>Higiene do sono:</strong> ambiente escuro/silencioso, temperatura adequada, evitar telas 1h antes, horários regulares</li>
+<li><strong>Terapia de controle de estímulos:</strong> cama apenas para sono e sexo; se não adormecer em 15-20 min, levantar e fazer atividade relaxante</li>
+<li><strong>Terapia de restrição do sono:</strong> limitar tempo na cama ao tempo real de sono; aumentar progressivamente</li>
+<li><strong>Técnicas de relaxamento:</strong> relaxamento muscular progressivo, respiração diafragmática</li>
+<li><strong>Reestruturação cognitiva:</strong> descatastrofizar crenças disfuncionais sobre o sono</li>
+</ul>
+
+<h3>4. Tratamento Farmacológico</h3>
+<table>
+<tr><th>Classe</th><th>Exemplos</th><th>Observações</th></tr>
+<tr><td>Agonistas benzodiazepínicos (BZD)</td><td>Diazepam, clonazepam</td><td>Alteram arquitetura do sono; risco de tolerância, dependência, quedas em idosos</td></tr>
+<tr><td>Não-BZD (drogas Z)</td><td>Zolpidem</td><td>Menor risco de dependência que BZD; indicados para uso de curta duração</td></tr>
+<tr><td>Antidepressivos sedativos</td><td>Trazodona, doxepina, mirtazapina</td><td>Úteis quando há comorbidade depressiva; trazodona é muito usada off-label</td></tr>
+<tr><td>Anti-histamínicos</td><td>Doxilamina, prometazina</td><td>Não recomendados como primeira escolha; efeitos anticolinérgicos; tolerância rápida</td></tr>
+<tr><td>Melatonina</td><td>Melatonina</td><td>Melhor evidência para distúrbios do ritmo circadiano e idosos; segura</td></tr>
+</table>
+<div class="alert"><strong>Atenção:</strong> BZD e anti-histamínicos são medicamentos potencialmente inapropriados para idosos (Critérios de Beers) pelo risco de quedas, sedação residual e déficit cognitivo.</div>
+`
+},
+{
+id:'promocao',
+title:'Promoção da Saúde e Prevenção',
+icon:'💪',
+area:'APS/MFC',
+content:`
+<h2>Promoção da Saúde e Prevenção de Doenças</h2>
+
+<h3>1. Promoção da Saúde (Carta de Ottawa, 1986)</h3>
+<p>Processo de capacitação da comunidade para atuar na melhoria de sua qualidade de vida e saúde, incluindo maior participação no controle desse processo. Vai além da assistência — envolve ações sobre determinantes sociais.</p>
+
+<p><strong>Campos de ação da Promoção da Saúde:</strong></p>
+<ul>
+<li>Elaboração de políticas públicas saudáveis</li>
+<li>Criação de ambientes favoráveis à saúde</li>
+<li>Reforço da ação comunitária</li>
+<li>Desenvolvimento de habilidades pessoais</li>
+<li>Reorientação dos serviços de saúde</li>
+</ul>
+
+<h3>2. Fatores de Risco Cardiovascular</h3>
+<p><strong>Modificáveis:</strong> HAS, DM, dislipidemia, tabagismo, sedentarismo, obesidade, estresse, dieta inadequada, etilismo.</p>
+<p><strong>Não modificáveis:</strong> idade, sexo, história familiar, etnia.</p>
+
+<h3>3. Prevenção na APS — Aplicação Prática</h3>
+<ul>
+<li><strong>Primária:</strong> orientação para atividade física regular, cessação do tabagismo, higiene do sono, moderação etílica, vacinação, alimentação saudável</li>
+<li><strong>Secundária:</strong> rastreamento de HAS (aferição anual ≥18 anos), DM (glicemia de jejum a cada 3 anos se fatores de risco), câncer (mama, colo uterino, colorretal), fundo de olho em diabéticos</li>
+<li><strong>Terciária:</strong> reabilitação pós-AVC, manejo de complicações crônicas do DM, programa de exercícios em DPOC</li>
+<li><strong>Quaternária:</strong> evitar cascata diagnóstica desnecessária, ponderar risco-benefício, espera vigilante</li>
+</ul>
+
+<h3>4. Autocuidado Apoiado</h3>
+<p>Educação do paciente para automonitorização (PA, glicemia), reconhecimento de sinais de alarme, adesão terapêutica e participação ativa no plano de cuidados. O papel da APS é empoderar, não criar dependência.</p>
+`
+},
+{
+id:'nutricao',
+title:'Nutrição e Crescimento Infantil',
+icon:'👶',
+area:'Pediatria',
+content:`
+<h2>Nutrição e Crescimento Infantil</h2>
+
+<h3>1. Avaliação do Crescimento</h3>
+<p>Utilizar as curvas de crescimento da OMS (2006 para <5 anos, 2007 para 5-19 anos). Parâmetros avaliados: peso/idade (P/I), estatura/idade (E/I), peso/estatura (P/E), IMC/idade, perímetro cefálico/idade (<2 anos).</p>
+
+<table>
+<tr><th>Escore Z</th><th>Classificação</th></tr>
+<tr><td>> +2</td><td>Peso elevado / Obesidade</td></tr>
+<tr><td>+1 a +2</td><td>Risco de sobrepeso</td></tr>
+<tr><td>-1 a +1</td><td>Eutrófico / Adequado</td></tr>
+<tr><td>-2 a -1</td><td>Risco nutricional</td></tr>
+<tr><td>-3 a -2</td><td>Baixo peso / Baixa estatura</td></tr>
+<tr><td>< -3</td><td>Muito baixo peso / Muito baixa estatura</td></tr>
+</table>
+
+<h3>2. Classificação da Desnutrição</h3>
+<ul>
+<li><strong>Desnutrição aguda (wasting):</strong> E/I normal + P/E baixo → emagrecimento recente</li>
+<li><strong>Desnutrição crônica (stunting):</strong> E/I baixo + P/E normal → comprometimento do crescimento linear</li>
+<li><strong>Desnutrição crônica agudizada:</strong> E/I baixo + P/E baixo</li>
+<li><strong>Desnutrição grave:</strong> emagrecimento acentuado visível OU edema bilateral (kwashiorkor)</li>
+</ul>
+
+<h3>3. Suplementação de Ferro</h3>
+<div class="highlight">
+<strong>SBP / MS:</strong><br>
+• RN a termo, peso adequado, AME: <strong>1 mg/kg/dia de ferro elementar</strong> dos 6 aos 24 meses.<br>
+• RN prematuro ou baixo peso: iniciar com <strong>2 mg/kg/dia</strong> a partir de 30 dias de vida até 12 meses, depois 1 mg/kg/dia até 24 meses.<br>
+• Sais ferrosos: melhor absorção em jejum, com vitamina C; efeitos GI comuns.<br>
+• Sais férricos (ferripolimaltose): maior tolerância, não sofrem influência da dieta.
+</div>
+
+<h3>4. Suplementação de Vitamina A</h3>
+<p>Programa Nacional de Suplementação de Vitamina A: crianças de 6 a 59 meses em áreas endêmicas.</p>
+<ul>
+<li>6-11 meses: 100.000 UI (dose única)</li>
+<li>12-59 meses: 200.000 UI a cada 6 meses</li>
+</ul>
+
+<h3>5. Síndrome Metabólica na Infância</h3>
+<p>Circunferência abdominal acima do percentil 90, associado a antecedente familiar de síndrome metabólica, é considerado diagnóstico. Avaliar perfil lipídico, glicemia, PA em crianças com obesidade.</p>
+
+<h3>6. Marcos do Crescimento</h3>
+<p>Observar estirões do crescimento e intervalos entre eles. Perímetro cefálico com medidas acima ou abaixo de 2 desvios-padrão requer investigação (microcefalia/macrocefalia). Velocidade de ganho de peso e estatura são mais informativos que medidas isoladas.</p>
+`
+},
+{
+id:'respiratorio',
+title:'Doenças Respiratórias na APS',
+icon:'🫁',
+area:'Pediatria',
+content:`
+<h2>Doenças Respiratórias Pediátricas na APS</h2>
+
+<h3>1. Bronquiolite Viral Aguda (BVA)</h3>
+<p>Infecção viral das vias aéreas inferiores que acomete bronquíolos. Principal agente: <strong>Vírus Sincicial Respiratório (VSR)</strong>. Outros: rinovírus, parainfluenza, metapneumovírus, adenovírus.</p>
+
+<p><strong>Faixa etária:</strong> predomina em <strong>lactentes < 2 anos</strong>, com pico entre 2-6 meses. Primeiro episódio de sibilância nesta faixa etária com quadro viral sugere BVA.</p>
+
+<p><strong>Quadro clínico:</strong> pródromos catarrais (coriza, espirros, tosse) por 2-3 dias → taquipneia, sibilos, esforço respiratório, dificuldade alimentar. Pode haver febre baixa.</p>
+
+<p><strong>Diagnóstico:</strong> essencialmente <strong>clínico</strong>. RX de tórax pode mostrar hiperinsuflação e rebaixamento de cúpulas diafragmáticas (aprisionamento aéreo), mas NÃO muda a conduta na maioria dos casos.</p>
+
+<div class="highlight">
+<strong>Conduta na BVA leve/moderada (manejo na APS):</strong><br>
+• Manter hidratação e aleitamento materno (AME ou AM)<br>
+• Lavagem nasal com SF 0,9% frequente<br>
+• Elevação da cabeceira (30°)<br>
+• Antitérmico se febre (dipirona ou paracetamol)<br>
+• Orientar sinais de alarme para retorno<br>
+• <strong>NÃO usar:</strong> antibióticos, broncodilatadores, corticoides, mucolíticos (sem evidência de benefício na BVA)
+</div>
+
+<div class="alert">
+<strong>Sinais de alarme para encaminhamento:</strong> taquipneia importante (FR>60 em <2m, FR>50 em 2-12m), tiragem subcostal, batimento de asa nasal, cianose, SpO2 <92%, recusa alimentar, apneia, toxemia.
+</div>
+
+<h3>2. Otite Média Aguda (OMA)</h3>
+<p>Infecção da orelha média, geralmente precedida por IVAS. Agentes: <em>S. pneumoniae</em>, <em>H. influenzae</em>, <em>M. catarrhalis</em>.</p>
+
+<p><strong>Quadro clínico:</strong> otalgia, febre, irritabilidade, otorreia. Na otoscopia: membrana timpânica hiperemiada, abaulada, com perda do triângulo luminoso.</p>
+
+<p><strong>Conduta:</strong></p>
+<ul>
+<li>Crianças ≥2 anos sem sinais de gravidade: <strong>observação vigilante 48-72h</strong> com analgesia (ibuprofeno/paracetamol) — maioria resolve espontaneamente</li>
+<li>Indicações de ATB imediato: <2 anos bilateral, otorreia, sintomas graves, perfuração</li>
+<li>ATB de 1ª linha: <strong>Amoxicilina 50 mg/kg/dia</strong> por 7-10 dias</li>
+<li>2ª linha: Amoxicilina + Clavulanato</li>
+</ul>
+
+<div class="alert"><strong>Mastoidite:</strong> tumefação retroauricular dolorosa com deslocamento anterior do pavilhão auricular. É complicação grave da OMA → encaminhamento urgente + 1ª dose de ATB parenteral (ceftriaxone).</div>
+
+<h3>3. Sibilância Recorrente / Crise de Asma</h3>
+<p>Alice (4 anos) com chiado crônico + agudização: considerar <strong>pneumonia comunitária com componente broncoespástico</strong> ou <strong>crise de asma desencadeada por infecção viral</strong>.</p>
+
+<p>Sinais de gravidade presentes: FR 44 (taquipneia), BAN, tiragem intercostal, retração de fúrcula, sibilos + estertores → <strong>quadro grave que requer atendimento de urgência</strong>.</p>
+
+<p><strong>Manejo da crise de sibilância (AIDPI):</strong></p>
+<table>
+<tr><th>Gravidade</th><th>Tratamento</th></tr>
+<tr><td>Leve</td><td>Salbutamol spray 100mcg: 2-3 jatos (<2a) ou 2-4 jatos (≥2a) a cada 20min até 3 doses</td></tr>
+<tr><td>Moderada</td><td>Beta-2 agonista inalatório 3x a cada 20 min + 1ª dose corticoide VO (prednisolona)</td></tr>
+<tr><td>Grave</td><td>Tratar previamente e referir urgentemente: O2 + NBZ + corticoide sistêmico</td></tr>
+</table>
+
+<h3>4. Faringite / Amigdalite</h3>
+<p>Marcos (2 anos) com odinofagia e inapetência. A etiologia <strong>viral</strong> é a mais comum, especialmente em <strong>menores de 3 anos</strong> — Streptococcus do grupo A é raro nessa faixa etária (receptores não desenvolvidos).</p>
+
+<p><strong>Síndrome mão-pé-boca (Coxsackie):</strong> muito contagiosa; transmissão fecal-oral-respiratória. Quadro: febre, vesículas em cavidade oral, mãos e pés (incluindo palmas/plantas). Evolução autolimitada (~1 semana). Tratamento sintomático.</p>
+
+<div class="info-box"><strong>Quando pensar em infecção bacteriana (S. pyogenes)?</strong> Idade >3 anos, exsudato tonsilar, adenopatia cervical dolorosa, febre alta, ausência de tosse/coriza. Score de Centor/McIsaac auxilia na decisão.</div>
+
+<h3>5. Síndrome Respiratória Aguda Grave (SRAG)</h3>
+<p>Definição: febre + tosse OU dor de garganta + dispneia OU desconforto respiratório OU SpO2 <95% OU queda de saturação.</p>
+<p>Conduta: notificação compulsória, coleta de amostra para painel viral, oseltamivir empírico em <48h, encaminhamento para serviço de urgência/emergência.</p>
+`
+},
+{
+id:'aidpi',
+title:'AIDPI — Criança 2m a 5a',
+icon:'📋',
+area:'Pediatria',
+content:`
+<h2>AIDPI — Atenção Integrada às Doenças Prevalentes na Infância</h2>
+<p>Estratégia da OMS/OPAS para redução da mortalidade infantil por doenças prevalentes. Sistematiza a avaliação e classificação da criança de 2 meses a 5 anos em cores (vermelho → amarelo → verde).</p>
+
+<h3>1. Sinais Gerais de Perigo</h3>
+<div class="alert">
+Toda criança deve ser avaliada quanto a sinais gerais de perigo:<br>
+• Não consegue beber ou mamar<br>
+• Vomita tudo<br>
+• Convulsões<br>
+• Letargia ou inconsciência<br>
+<strong>→ Qualquer sinal de perigo = referir urgentemente ao hospital</strong>
+</div>
+
+<h3>2. Avaliação de Tosse ou Dificuldade para Respirar</h3>
+<table>
+<tr><th>Classificação</th><th>Sinais</th><th>Conduta</th></tr>
+<tr><td style="color:var(--err)"><strong>PNEUMONIA GRAVE ou DOENÇA MUITO GRAVE</strong></td><td>Sinal geral de perigo + tiragem subcostal + estridor em repouso</td><td>1ª dose ATB + referir urgentemente</td></tr>
+<tr><td style="color:var(--warn)"><strong>PNEUMONIA</strong></td><td>Respiração rápida (FR elevada para idade)</td><td>ATB ambulatorial (amoxicilina) + retorno em 2 dias</td></tr>
+<tr><td style="color:var(--acc)"><strong>NÃO É PNEUMONIA</strong></td><td>Sem sinais de pneumonia</td><td>Tratamento sintomático domiciliar</td></tr>
+</table>
+
+<p><strong>Frequência respiratória elevada por faixa etária:</strong></p>
+<ul>
+<li>2-11 meses: ≥50 irpm</li>
+<li>12 meses a 5 anos: ≥40 irpm</li>
+</ul>
+
+<h3>3. Avaliação de Diarreia</h3>
+<p>Classificar grau de desidratação e tipo de diarreia (aguda, persistente, disentérica).</p>
+<ul>
+<li><strong>Plano A:</strong> sem desidratação → tratar em casa com líquidos e SRO após cada evacuação</li>
+<li><strong>Plano B:</strong> desidratação → SRO por 4h no serviço de saúde</li>
+<li><strong>Plano C:</strong> desidratação grave → hidratação IV urgente</li>
+</ul>
+
+<h3>4. Avaliação do Ouvido</h3>
+<table>
+<tr><th>Classificação</th><th>Sinais</th><th>Conduta</th></tr>
+<tr><td style="color:var(--err)"><strong>MASTOIDITE</strong></td><td>Tumefação dolorosa atrás da orelha</td><td>1ª dose ATB + referir urgentemente</td></tr>
+<tr><td style="color:var(--warn)"><strong>INFECÇÃO AGUDA DO OUVIDO</strong></td><td>Dor de ouvido + membrana timpânica alterada ou otorreia <14 dias</td><td>ATB por 7-10 dias + analgésico</td></tr>
+<tr><td style="color:var(--warn)"><strong>INFECÇÃO CRÔNICA</strong></td><td>Otorreia ≥14 dias</td><td>Secar ouvido com gaze; referir para especialista</td></tr>
+<tr><td style="color:var(--acc)"><strong>SEM INFECÇÃO</strong></td><td>Sem dor, sem otorreia</td><td>Nenhum tratamento adicional</td></tr>
+</table>
+
+<h3>5. Avaliação da Dor de Garganta</h3>
+<table>
+<tr><th>Classificação</th><th>Sinais</th><th>Conduta</th></tr>
+<tr><td style="color:var(--err)"><strong>INFECÇÃO GRAVE</strong></td><td>Sinal geral de perigo + abaulamento de palato + membrana branco-acinzentada</td><td>1ª dose ATB + referir</td></tr>
+<tr><td style="color:var(--warn)"><strong>AMIGDALITE BACTERIANA</strong></td><td>Exsudato purulento + gânglios cervicais aumentados/dolorosos</td><td>Penicilina Benzatina OU Amoxicilina 10 dias</td></tr>
+<tr><td style="color:var(--acc)"><strong>INFECÇÃO VIRAL</strong></td><td>Hiperemia sem exsudato, sem gânglios</td><td>Analgésico/antitérmico</td></tr>
+</table>
+
+<h3>6. Avaliação Nutricional e Desenvolvimento</h3>
+<p>Toda criança deve ter peso, estatura e PC avaliados com classificação por Z-score. Anemia (palidez palmar) → suplementação de ferro + anti-helmíntico. Desenvolvimento avaliado por marcos motores/linguagem para a faixa etária.</p>
+`
+},
+{
+id:'puericultura',
+title:'Consulta do RN e Amamentação',
+icon:'🍼',
+area:'Pediatria',
+content:`
+<h2>Primeira Consulta do Recém-Nascido e Amamentação</h2>
+
+<h3>1. Anamnese</h3>
+<p><strong>Perguntas gatilho:</strong></p>
+<ul>
+<li>"Que preocupações você gostaria de me contar hoje?"</li>
+<li>"Como você e sua família estão com o nascimento do seu filho?"</li>
+<li>"Como você está alimentando o seu bebê?"</li>
+<li>"Alguém em sua casa faz uso de cigarros, bebidas alcoólicas ou alguma droga ilícita?"</li>
+</ul>
+
+<h3>2. Exame Físico Completo do RN</h3>
+<table>
+<tr><th>Tópico</th><th>Pontos-chave</th></tr>
+<tr><td>Peso/Comprimento/PC</td><td>Perda de até 10% é normal; recuperação entre D10-D15. PC acima/abaixo de 2 DP → investigar</td></tr>
+<tr><td>Pele</td><td>Icterícia (zona de Kramer), eritema tóxico, mancha mongólica, milium</td></tr>
+<tr><td>Cabeça</td><td>Fontanelas (anterior: losangular, fecha ~18m; posterior: triangular, fecha ~2m), bossa serossanguínea, cefalohematoma</td></tr>
+<tr><td>Pescoço</td><td>Torcicolo congênito (90% resolução espontânea)</td></tr>
+<tr><td>Abdome</td><td>Respiração é basicamente abdominal no RN; avaliar coto umbilical</td></tr>
+<tr><td>Geniturinário</td><td>Testículos (criptorquidia?), fimose fisiológica, localização meato urinário</td></tr>
+<tr><td>Quadris</td><td>Manobras de Ortolani e Barlow para displasia do desenvolvimento</td></tr>
+<tr><td>Coluna</td><td>Linha média lombo-sacra para afastar espinha bífida</td></tr>
+<tr><td>Neurológico</td><td>Reflexos primitivos: Moro, preensão palmar/plantar, sucção, marcha reflexa</td></tr>
+</table>
+
+<h3>3. Triagens Neonatais</h3>
+<ul>
+<li><strong>Teste do pezinho:</strong> fenilcetonúria, hipotireoidismo congênito, fibrose cística, doença falciforme, deficiência de biotinidase, hiperplasia adrenal congênita. Coletar entre 3º-5º dia de vida.</li>
+<li><strong>Teste do coraçãozinho:</strong> oximetria de pulso em MSD e MI entre 24-48h. Diferença >3% ou SpO2 <95% → ecocardiograma</li>
+<li><strong>Teste da orelhinha (EOA):</strong> emissões otoacústicas nas primeiras 24-48h de vida</li>
+<li><strong>Teste do olhinho (reflexo vermelho):</strong> 1ª consulta, repetir no 4º, 6º, 12º mês e aos 2 anos. Ausência = retinoblastoma, catarata congênita → referir</li>
+<li><strong>Teste da linguinha:</strong> avaliação do frênulo lingual (anquiloglossia)</li>
+</ul>
+
+<h3>4. Aleitamento Materno</h3>
+<div class="highlight">
+<strong>Recomendação OMS/MS:</strong> aleitamento materno exclusivo (AME) até 6 meses, complementado até 2 anos ou mais.
+</div>
+
+<p><strong>Técnica de amamentação:</strong></p>
+<ul>
+<li>Pega adequada: boca bem aberta, lábio inferior evertido, aréola mais visível acima da boca, queixo tocando a mama</li>
+<li>Corpo do bebê virado para o corpo da mãe ("barriga com barriga")</li>
+<li>Livre demanda: sempre que o bebê quiser</li>
+</ul>
+
+<p><strong>Situações incompatíveis com amamentação:</strong></p>
+<ul>
+<li>Mãe HIV+ (no Brasil, contraindicação absoluta — transmissão vertical)</li>
+<li>HTLV-1/2</li>
+<li>Uso de drogas de abuso (período variável de interrupção: álcool 2h/dose, maconha 24h, cocaína 24h, anfetamina 24-36h)</li>
+</ul>
+
+<h3>5. Orientações Preventivas</h3>
+<ul>
+<li><strong>Sono seguro:</strong> posição supina; coleito deve ser desaconselhado; evitar objetos no berço</li>
+<li><strong>Evitar chupetas</strong> — risco de confusão de bicos, maloclusão, otite</li>
+<li><strong>Banho:</strong> água a 37°C, nunca deixar sozinho na banheira</li>
+<li><strong>Transporte:</strong> bebê-conforto de costas no banco traseiro</li>
+<li><strong>Vacinas:</strong> BCG e Hepatite B ao nascimento</li>
+</ul>
+`
+},
+{
+id:'sazonalidade',
+title:'Sazonalidade Respiratória — SES-DF',
+icon:'🦠',
+area:'Epidemiologia',
+content:`
+<h2>Plano de Enfrentamento da Sazonalidade Respiratória — SES-DF</h2>
+
+<h3>1. Contexto Epidemiológico</h3>
+<p>O DF enfrenta sazonalidade de infecções respiratórias virais na pediatria, com picos entre março-julho. Principais agentes: VSR, influenza, SARS-CoV-2, rinovírus, metapneumovírus humano. A vulnerabilidade maior é em crianças <2 anos, idosos e imunossuprimidos.</p>
+
+<h3>2. Definições Operacionais</h3>
+<ul>
+<li><strong>Síndrome Gripal (SG):</strong> febre de início súbito (mesmo referida) + tosse OU dor de garganta + pelo menos um: cefaleia, mialgia ou artralgia. Em crianças <2 anos: febre de início súbito + sintomas respiratórios (sem outro diagnóstico específico).</li>
+<li><strong>SRAG:</strong> SG + dispneia OU desconforto respiratório OU SpO2 <95% OU piora clínica. Em crianças: BAN, tiragem intercostal, desidratação.</li>
+</ul>
+
+<h3>3. Estágios Operacionais</h3>
+<p>O plano define estágios com base em indicadores de vigilância: atividade viral, ocupação de leitos pediátricos, fila de regulação para UTI. Cada estágio aciona ações específicas de preparação, alerta e resposta.</p>
+
+<h3>4. Papel da APS</h3>
+<ul>
+<li>Classificação de risco adequada no acolhimento</li>
+<li>Manejo de casos leves na UBS</li>
+<li>Identificação precoce de sinais de gravidade para encaminhamento</li>
+<li>Vacinação oportuna (influenza, COVID-19)</li>
+<li>Educação em saúde: etiqueta respiratória, lavagem das mãos</li>
+<li>Notificação de casos de SRAG</li>
+</ul>
+
+<h3>5. Imunização contra VSR</h3>
+<p>O MS instituiu estratégia de imunização passiva com <strong>anticorpo monoclonal (nirsevimabe/palivizumabe)</strong> para crianças prematuras e com comorbidades. Visa reduzir internações por BVA grave.</p>
+
+<h3>6. Oseltamivir na APS</h3>
+<p>Indicado em casos de SG com fatores de risco (crianças <5 anos, gestantes, idosos, comorbidades), idealmente nas primeiras 48h de sintomas. Dose pediátrica conforme peso.</p>
+`
+},
+{
+id:'estudos_epi',
+title:'Tipos de Estudos Epidemiológicos',
+icon:'🔬',
+area:'Epidemiologia',
+content:`
+<h2>Tipos de Estudos Epidemiológicos</h2>
+
+<h3>1. Classificação Geral</h3>
+<p><strong>Observacionais:</strong> o pesquisador observa sem intervir.</p>
+<p><strong>Experimentais (intervencionais):</strong> o pesquisador aplica uma intervenção.</p>
+
+<h3>2. Estudos Observacionais Descritivos</h3>
+<ul>
+<li><strong>Relato de caso:</strong> descrição detalhada de um caso individual atípico ou raro</li>
+<li><strong>Série de casos:</strong> descrição de um grupo de pacientes com apresentação semelhante, sem grupo controle</li>
+<li><strong>Estudo ecológico:</strong> unidade de análise = populações (não indivíduos). Correlaciona variáveis agregadas. Limitação: falácia ecológica.</li>
+<li><strong>Estudo transversal (corte transversal):</strong> "fotografia" — avalia exposição e desfecho no mesmo momento. Calcula prevalência. Limitação: não estabelece causalidade temporal.</li>
+</ul>
+
+<h3>3. Estudos Observacionais Analíticos</h3>
+<ul>
+<li><strong>Caso-controle:</strong> retrospectivo. Parte do <strong>desfecho</strong> (casos com doença vs. controles sem doença) e investiga exposição prévia. Medida de associação: <strong>Odds Ratio (OR)</strong>. Bom para doenças raras. Limitação: viés de memória.</li>
+<li><strong>Coorte:</strong> parte da <strong>exposição</strong> e acompanha ao longo do tempo para verificar desfechos. Pode ser prospectivo ou retrospectivo. Medida de associação: <strong>Risco Relativo (RR)</strong>. Mais caro e demorado, mas estabelece temporalidade.</li>
+</ul>
+
+<h3>4. Estudos Experimentais</h3>
+<ul>
+<li><strong>Ensaio clínico randomizado (ECR):</strong> padrão-ouro para avaliar eficácia de intervenções. Randomização, cegamento (simples, duplo, triplo), grupo controle. Maior nível de evidência (exceto revisões sistemáticas/meta-análises).</li>
+</ul>
+
+<h3>5. Hierarquia da Evidência</h3>
+<div class="highlight">
+Do maior para o menor nível de evidência:<br>
+1. Revisões sistemáticas com meta-análise de ECRs<br>
+2. Ensaios clínicos randomizados<br>
+3. Estudos de coorte<br>
+4. Estudos caso-controle<br>
+5. Estudos transversais<br>
+6. Séries e relatos de caso<br>
+7. Opinião de especialista
+</div>
+
+<h3>6. Medidas de Associação</h3>
+<table>
+<tr><th>Medida</th><th>Estudo</th><th>Interpretação</th></tr>
+<tr><td>Risco Relativo (RR)</td><td>Coorte</td><td>>1: fator de risco; <1: fator protetor; =1: sem associação</td></tr>
+<tr><td>Odds Ratio (OR)</td><td>Caso-controle</td><td>Mesma interpretação do RR; aproxima o RR quando prevalência é baixa</td></tr>
+<tr><td>Razão de Prevalência (RP)</td><td>Transversal</td><td>Análoga ao RR para estudos transversais</td></tr>
+<tr><td>NNT</td><td>ECR/Coorte</td><td>Número necessário para tratar para evitar 1 desfecho; menor = melhor</td></tr>
+</table>
+`
+}
+,
+{
+id:'has',
+title:'HAS, Crises Hipertensivas e Dislipidemias',
+icon:'❤️',
+area:'Clínica',
+content:`
+<h2>Hipertensão Arterial Sistêmica na APS</h2>
+
+<h3>1. Diagnóstico</h3>
+<p>O diagnóstico de HAS requer <strong>medidas repetidas em pelo menos 2 consultas</strong> com intervalo de 1-2 semanas, com técnica adequada. Alternativa: MRPA (Monitorização Residencial da PA) ou MAPA (Monitorização Ambulatorial).</p>
+
+<p><strong>Técnica correta:</strong> repouso de 3-5 min, bexiga vazia, sem cafeína/tabaco 30 min antes, manguito adequado ao braço, braço apoiado na altura do coração, 2 medidas com intervalo de 1-2 min (usar a média).</p>
+
+<table>
+<tr><th>Classificação (DBHA 2020)</th><th>PAS</th><th>PAD</th></tr>
+<tr><td>PA ótima</td><td>&lt;120</td><td>&lt;80</td></tr>
+<tr><td>PA normal</td><td>120-129</td><td>80-84</td></tr>
+<tr><td>Pré-hipertensão</td><td>130-139</td><td>85-89</td></tr>
+<tr><td><strong>HAS estágio 1</strong></td><td>140-159</td><td>90-99</td></tr>
+<tr><td><strong>HAS estágio 2</strong></td><td>160-179</td><td>100-109</td></tr>
+<tr><td><strong>HAS estágio 3</strong></td><td>≥180</td><td>≥110</td></tr>
+</table>
+
+<h3>2. Avaliação Inicial</h3>
+<p><strong>Exames de rotina:</strong> glicemia de jejum, HbA1c, colesterol total, HDL, LDL, triglicérides, creatinina (TFG), potássio, ácido úrico, EAS, ECG de repouso. Fundoscopia em estágios 2-3.</p>
+
+<div class="highlight"><strong>Lesões de órgão-alvo (LOA):</strong> hipertrofia de VE (ECG/ecocardiograma), retinopatia hipertensiva, nefropatia (albuminúria, creatinina elevada), doença arterial periférica, AVC/AIT prévio, cardiopatia isquêmica.</div>
+
+<h3>3. Risco Cardiovascular</h3>
+<p>A decisão terapêutica depende do risco CV global, não apenas dos níveis pressóricos. Usar escores como Framingham ou PREVENT (AHA 2024). Fatores que aumentam o risco: DM, tabagismo, dislipidemia, obesidade, história familiar de DCV precoce (homem <55a, mulher <65a), idade, etnia negra.</p>
+
+<h3>4. Tratamento Não Farmacológico</h3>
+<ul>
+<li>Restrição de sódio (<2g/dia = <5g sal)</li>
+<li>Dieta DASH</li>
+<li>Atividade física aeróbica 150 min/semana</li>
+<li>Controle de peso (IMC 18,5-24,9)</li>
+<li>Moderação no álcool (homens ≤2 doses/dia, mulheres ≤1)</li>
+<li>Cessação do tabagismo</li>
+<li>Manejo do estresse</li>
+</ul>
+
+<h3>5. Tratamento Farmacológico</h3>
+<p><strong>Primeira linha (4 classes):</strong></p>
+<table>
+<tr><th>Classe</th><th>Exemplos</th><th>Observações</th></tr>
+<tr><td>IECA</td><td>Enalapril, ramipril, captopril</td><td>Nefroprotetor em diabéticos. Tosse seca (5-20%). CI: gestação, hipercalemia</td></tr>
+<tr><td>BRA</td><td>Losartana, valsartana</td><td>Alternativa ao IECA (sem tosse). NÃO associar IECA + BRA</td></tr>
+<tr><td>BCC</td><td>Anlodipino, nifedipino</td><td>Edema maleolar dose-dependente. Bom para idosos e negros</td></tr>
+<tr><td>Diuréticos tiazídicos</td><td>Hidroclorotiazida, indapamida, clortalidona</td><td>Primeira escolha em negros e idosos. Pode causar hipocalemia, hiperuricemia</td></tr>
+</table>
+
+<div class="info-box"><strong>Estágio 1 com risco baixo/moderado:</strong> monoterapia. <strong>Estágio 1 com risco alto ou Estágio 2+:</strong> combinação de 2 drogas desde o início. A combinação preferencial é IECA/BRA + BCC ou IECA/BRA + diurético.</div>
+
+<h3>6. HAS Secundária — Quando Suspeitar?</h3>
+<ul>
+<li>HAS em jovem (<30 anos) sem fatores de risco</li>
+<li>HAS resistente (≥3 drogas em dose otimizada + diurético)</li>
+<li>Piora súbita do controle pressórico</li>
+<li>Hipocalemia espontânea</li>
+<li>Sopro abdominal → estenose de artéria renal</li>
+<li>Creatinina elevando após IECA/BRA → estenose bilateral</li>
+<li>TSH suprimido + taquicardia + tremor → hipertireoidismo</li>
+<li>Palpitações + sudorese + crises paroxísticas → feocromocitoma</li>
+</ul>
+
+<h3>7. Crises vs. Pseudocrises Hipertensivas</h3>
+<div class="alert">
+<strong>Pseudocrise:</strong> PA elevada SEM sintomas ou com sintomas vagos (cefaleia leve, ansiedade) e SEM lesão de órgão-alvo. Conduta: <strong>NÃO dar captopril sublingual</strong>. Orientar repouso, retomar/ajustar medicação habitual, retorno em 7 dias com MRPA. Maioria: paciente parou medicação ou nunca tratou.
+</div>
+
+<p><strong>Urgência hipertensiva:</strong> PA ≥180/120 com sintomas significativos (cefaleia intensa, epistaxe volumosa, dispneia) mas SEM LOA aguda. Reduzir PA em 24-48h com anti-hipertensivo VO (captopril 25mg VO, clonidina). Acompanhar na UBS.</p>
+
+<p><strong>Emergência hipertensiva:</strong> PA ≥180/120 COM lesão aguda de órgão-alvo (EAP, dissecção aórtica, encefalopatia, AVC, eclâmpsia, IAM). <strong>Encaminhar SAMU/UPA</strong> — redução controlada com drogas IV em UTI.</p>
+
+<h3>8. Dislipidemias</h3>
+<p>Classificação laboratorial: hipercolesterolemia isolada (LDL elevado), hipertrigliceridemia isolada (TG elevado), mista, HDL baixo isolado.</p>
+<p><strong>Metas de LDL conforme risco CV:</strong></p>
+<ul>
+<li>Risco muito alto: LDL <50 mg/dL</li>
+<li>Risco alto: LDL <70 mg/dL</li>
+<li>Risco intermediário: LDL <100 mg/dL</li>
+<li>Risco baixo: LDL <130 mg/dL</li>
+</ul>
+<p><strong>Estatinas:</strong> tratamento de primeira linha para hipercolesterolemia. Alta potência: atorvastatina 40-80mg, rosuvastatina 20-40mg. Moderada: sinvastatina 20-40mg. Monitorar transaminases e CPK.</p>
+`
+},
+{
+id:'preconcepcional',
+title:'Avaliação Pré-concepcional e Planejamento Reprodutivo',
+icon:'🤰',
+area:'Saúde da Mulher',
+content:`
+<h2>Avaliação Pré-concepcional e Planejamento Reprodutivo</h2>
+
+<h3>1. Planejamento Reprodutivo</h3>
+<p>Direito humano garantido pela <strong>Lei 9.263/96</strong>: conjunto de ações de regulação da fecundidade que garante direitos iguais de constituição, limitação ou aumento da prole pela mulher, pelo homem ou pelo casal. A APS é o ponto de acesso privilegiado para essas ações.</p>
+
+<p>Benefícios do planejamento reprodutivo: redução da morbimortalidade materno-infantil, redução de gestações indesejadas, aumento do intervalo interpartal, diminuição de laqueaduras tubárias e promoção de justiça social.</p>
+
+<h3>2. Consulta Pré-concepcional</h3>
+<p>Intervenções biomédicas, comportamentais e sociais realizadas <strong>antes da concepção</strong> para melhorar o estado de saúde e reduzir riscos para mãe e bebê. No Brasil, menos de 15% das gestações são precedidas por avaliação pré-concepcional.</p>
+
+<p><strong>Ações da consulta pré-concepcional:</strong></p>
+<ul>
+<li>Avaliação nutricional e antropométrica (IMC, peso ideal)</li>
+<li><strong>Ácido fólico 5mg/dia</strong>, iniciando 60-90 dias antes da concepção (prevenção de defeitos do tubo neural)</li>
+<li>Avaliação do uso de drogas: tabagismo, álcool, drogas ilícitas, vaping</li>
+<li>Revisão de medicamentos em uso (teratogenicidade)</li>
+<li>Testes rápidos: HIV, sífilis, hepatites B e C (tentante E parceria)</li>
+<li>Sorologia: toxoplasmose (IgG/IgM)</li>
+<li>Avaliar imunização: rubéola, varicela, hepatite B</li>
+<li>Tipagem sanguínea e fator Rh</li>
+<li>Aferição da PA, glicemia</li>
+<li>Exame clínico, mamas e colpocitológico</li>
+<li>Anamnese: gestações prévias, comorbidades, história familiar</li>
+<li>Avaliação de ciclo de vida familiar e rede de apoio</li>
+<li>Rastreamento de violência doméstica</li>
+<li>Avaliação da saúde mental</li>
+<li>Avaliação de risco laboral (exposição a agentes nocivos)</li>
+</ul>
+
+<h3>3. Medicamentos na Gestação</h3>
+
+<div class="alert">
+<strong>Anti-hipertensivos:</strong> IECA e BRA são CONTRAINDICADOS na gestação (teratogênicos). A <strong>metildopa</strong> é o anti-hipertensivo de escolha na gestação, mas NÃO deve ser mantida fora da gestação como tratamento crônico (caso clínico da Marina — Estudo Dirigido 3).
+</div>
+
+<p><strong>Anticonvulsivantes na gestação:</strong></p>
+<ul>
+<li><strong>Ácido valproico:</strong> MAIOR risco teratogênico (10,93%) — contraindicado se possível. Dose-dependente.</li>
+<li><strong>Carbamazepina e fenitoína:</strong> risco aumentado vs. controles</li>
+<li><strong>Lamotrigina e levetiracetam:</strong> menor risco — preferir quando possível</li>
+<li>NÃO suspender anticonvulsivante na gestação (risco de crises > risco teratogênico). Ajustar droga e dose no pré-concepcional.</li>
+<li>Usar ácido fólico em dose alta (5mg/dia) em usuárias de anticonvulsivantes</li>
+</ul>
+
+<p><strong>Antidepressivos na gestação:</strong></p>
+<ul>
+<li><strong>Sertralina:</strong> primeira escolha (maior segurança gestação + lactação)</li>
+<li>Alternativas: fluoxetina, citalopram, escitalopram</li>
+<li><strong>Paroxetina:</strong> evitar — estudos sugerem risco de defeitos cardíacos septais</li>
+<li>Tricíclicos: sem aumento de malformações, mas risco de síndrome de abstinência neonatal no 3º trimestre</li>
+<li>ISRS no 3º trimestre: possíveis complicações neonatais transitórias (irritabilidade, tremores, alteração do sono) — geralmente leves e autolimitadas (<2 semanas)</li>
+</ul>
+
+<h3>4. Gestação Indesejada vs. Não Planejada</h3>
+<p><strong>Não planejada:</strong> a pessoa não tinha intenção de engravidar, mas pode ser desejada (aceita a gestação). <strong>Indesejada:</strong> a pessoa entende que não quer ou não pode levar adiante.</p>
+
+<p>No Brasil, 55,4% das gestações não são planejadas ou intencionais. Uma em cada cinco mulheres brasileiras até os 40 anos já realizou um aborto.</p>
+
+<h3>5. Opções diante da gestação indesejada</h3>
+<ul>
+<li>Continuar a gravidez e criar a criança</li>
+<li>Entrega voluntária para adoção (encaminhar relatório à VIJ e MP — acompanhamento psicológico e social obrigatório)</li>
+<li>Aborto legal (nas situações previstas em lei)</li>
+</ul>
+
+<h3>6. Aborto Legal no Brasil</h3>
+<p>Permitido em <strong>3 situações:</strong></p>
+<ul>
+<li>Gravidez decorrente de <strong>estupro</strong> (art. 128, II, CP) — sem limite de IG, sem necessidade de BO ou autorização judicial</li>
+<li>Risco de <strong>vida para a gestante</strong> (art. 128, I, CP)</li>
+<li><strong>Anencefalia</strong> fetal (ADPF 54, STF 2012)</li>
+</ul>
+
+<div class="info-box">
+<strong>Deveres do médico:</strong> acolher sem julgamento, informar sobre direitos, oferecer todas as opções (continuar, adoção, aborto legal se aplicável), respeitar autonomia. Objeção de consciência é permitida ao profissional individual, mas o serviço deve garantir o atendimento.
+</div>
+
+<h3>7. Avaliação de Risco Laboral na Gestação</h3>
+<p>Gestante exposta a riscos ocupacionais (físicos, químicos, biológicos, ergonômicos): solicitar mudança de função. Se não possível, afastamento do trabalho. A gestante <strong>não perde o adicional de insalubridade</strong> e tem direito ao retorno à função prévia após o parto.</p>
+`
+}
+];
+
+// ═══════════════════════════════════════
+// DATA: FLASHCARDS
+// ═══════════════════════════════════════
+const FLASHCARDS = [
+// ══════════════════════════════════════════════
+// EPIDEMIOLOGIA (30 cards)
+// ══════════════════════════════════════════════
+{cat:'Epidemiologia',q:'Qual a diferença entre prevalência e incidência?',a:'<strong>Prevalência</strong> = nº de casos <em>existentes</em> / população (transversal). <strong>Incidência</strong> = nº de casos <em>novos</em> / população em risco (coorte). Prevalência depende da incidência e da duração da doença.'},
+{cat:'Epidemiologia',q:'O que significa um teste com alta sensibilidade?',a:'Identifica corretamente a maioria dos doentes (poucos FN). Mnemônico: <strong>SnOUT</strong> — Sensibilidade alta + resultado Negativo = exclui (rules OUT). Ideal para rastreamento.'},
+{cat:'Epidemiologia',q:'O que significa um teste com alta especificidade?',a:'Identifica corretamente a maioria dos sadios (poucos FP). Mnemônico: <strong>SpIN</strong> — Especificidade alta + resultado Positivo = confirma (rules IN). Ideal para diagnóstico definitivo.'},
+{cat:'Epidemiologia',q:'O que é Valor Preditivo Positivo (VPP)?',a:'Probabilidade de realmente ter a doença dado um teste positivo: <strong>VP / (VP + FP)</strong>. Depende da prevalência — quanto maior a prevalência, maior o VPP.'},
+{cat:'Epidemiologia',q:'O que é Valor Preditivo Negativo (VPN)?',a:'Probabilidade de realmente não ter a doença dado um teste negativo: <strong>VN / (VN + FN)</strong>. Em doenças de baixa prevalência, o VPN tende a ser alto.'},
+{cat:'Epidemiologia',q:'Como a prevalência afeta o VPP e o VPN?',a:'<strong>Prevalência alta</strong> → VPP aumenta, VPN diminui. <strong>Prevalência baixa</strong> → VPP diminui (mais falso-positivos), VPN aumenta. Sensibilidade e especificidade não mudam com a prevalência.'},
+{cat:'Epidemiologia',q:'Quais são os critérios de Wilson & Jungner para rastreamento?',a:'1. Problema de saúde pública importante; 2. História natural conhecida; 3. Fase pré-clínica definida; 4. Tratamento precoce benéfico; 5. Testes disponíveis e aceitáveis; 6. Custo razoável; 7. Processo contínuo e sistemático.'},
+{cat:'Epidemiologia',q:'O que é viés de lead-time (tempo de antecipação)?',a:'Rastreamento detecta doença mais cedo sem alterar a data de morte, criando <strong>falsa impressão de maior sobrevida</strong>. O paciente apenas "sabe antes" que está doente.'},
+{cat:'Epidemiologia',q:'O que é viés de tempo de duração (length bias)?',a:'Rastreamento detecta preferencialmente doenças de <strong>progressão lenta</strong> (prognóstico inerentemente melhor), superestimando o benefício do rastreamento.'},
+{cat:'Epidemiologia',q:'O que é sobrediagnóstico (overdiagnosis)?',a:'Detecção de doenças que <strong>nunca causariam sintomas nem morte</strong>. Principal dano do rastreamento — gera ansiedade, exames invasivos e tratamentos desnecessários.'},
+{cat:'Epidemiologia',q:'O que é viés do voluntário saudável?',a:'Pessoas que participam voluntariamente de rastreamentos tendem a ser <strong>mais saudáveis</strong> e engajadas em saúde, superestimando o benefício do programa.'},
+{cat:'Epidemiologia',q:'Diferença entre rastreamento oportunístico e organizado?',a:'<strong>Oportunístico:</strong> aproveita a consulta para rastrear; menor impacto, mais oneroso. <strong>Organizado:</strong> alcance populacional, garante seguimento (diagnóstico + tratamento). Ex: colo uterino.'},
+{cat:'Epidemiologia',q:'O que é Prevenção Quaternária (Jamoulle)?',a:'Identificar pacientes em risco de <strong>medicalização excessiva</strong> e protegê-los de intervenções desnecessárias. Princípio: primum non nocere. Inclui espera vigilante e evitar cascata diagnóstica.'},
+{cat:'Epidemiologia',q:'Quais os 4 níveis de prevenção?',a:'<strong>Primária:</strong> pré-patogênica (vacina, atividade física). <strong>Secundária:</strong> fase subclínica (rastreamento). <strong>Terciária:</strong> doença instalada (reabilitação). <strong>Quaternária:</strong> proteção contra excesso médico.'},
+{cat:'Epidemiologia',q:'O que é o paradoxo da prevenção (Rose)?',a:'A estratégia preventiva populacional que traz mais benefício para a saúde da população oferece <strong>poucos benefícios individuais</strong>. Ex: reduzir sal na dieta de toda a população.'},
+{cat:'Epidemiologia',q:'Diferença entre abordagem de alto risco e populacional?',a:'<strong>Alto risco:</strong> seleciona grupo vulnerável — eficiente individualmente, menor impacto global. <strong>Populacional:</strong> atua sobre todos — grande alcance, mas benefício individual pequeno (paradoxo da prevenção).'},
+{cat:'Epidemiologia',q:'Qual a diferença entre estudo transversal e coorte?',a:'<strong>Transversal:</strong> "fotografia" — mede exposição e desfecho no mesmo momento; calcula prevalência. <strong>Coorte:</strong> segue expostos no tempo → mede incidência e RR. Estabelece temporalidade.'},
+{cat:'Epidemiologia',q:'Qual a diferença entre estudo caso-controle e coorte?',a:'<strong>Caso-controle:</strong> parte do desfecho → investiga exposição passada (retrospectivo, usa OR). <strong>Coorte:</strong> parte da exposição → acompanha desfechos (usa RR). Coorte é mais robusto mas mais caro.'},
+{cat:'Epidemiologia',q:'O que é Odds Ratio (OR)?',a:'Razão de chances: mede associação em estudos <strong>caso-controle</strong>. OR > 1 = fator de risco; OR < 1 = fator protetor; OR = 1 = sem associação. Aproxima o RR quando a prevalência é baixa.'},
+{cat:'Epidemiologia',q:'O que é Risco Relativo (RR)?',a:'Razão entre a incidência nos expostos e nos não-expostos. Usado em <strong>estudos de coorte</strong>. RR > 1 = fator de risco; RR < 1 = fator protetor; RR = 1 = sem associação.'},
+{cat:'Epidemiologia',q:'O que é NNT (Número Necessário para Tratar)?',a:'Número de pacientes que precisam ser tratados para <strong>evitar um desfecho negativo</strong>. NNT = 1/RAR (redução absoluta de risco). Quanto menor o NNT, melhor a intervenção.'},
+{cat:'Epidemiologia',q:'O que é NNH (Número Necessário para Causar Dano)?',a:'Número de pacientes expostos à intervenção para que <strong>um paciente a mais</strong> apresente efeito adverso. NNH = 1/aumento absoluto de risco. Quanto maior, mais segura a intervenção.'},
+{cat:'Epidemiologia',q:'O que é falácia ecológica?',a:'Erro ao inferir relações <strong>individuais</strong> a partir de dados <strong>agregados</strong> (populacionais). Ex: países com mais consumo de chocolate têm mais prêmios Nobel — não significa que comer chocolate torna uma pessoa mais inteligente.'},
+{cat:'Epidemiologia',q:'Quais os tipos de validade de um estudo?',a:'<strong>Validade interna:</strong> os resultados são verdadeiros para a amostra estudada (livre de vieses). <strong>Validade externa (generalização):</strong> os resultados podem ser aplicados a outras populações.'},
+{cat:'Epidemiologia',q:'O que é um Ensaio Clínico Randomizado (ECR)?',a:'Estudo experimental onde participantes são <strong>alocados aleatoriamente</strong> para intervenção ou controle. É o <strong>padrão-ouro</strong> para avaliar eficácia terapêutica. Permite cegamento (simples, duplo, triplo).'},
+{cat:'Epidemiologia',q:'Qual a hierarquia da evidência (do maior para menor)?',a:'1. Revisões sistemáticas com meta-análise de ECRs; 2. ECRs; 3. Coortes; 4. Caso-controle; 5. Transversais; 6. Séries/relatos de caso; 7. Opinião de especialista.'},
+{cat:'Epidemiologia',q:'O que é um estudo ecológico?',a:'Unidade de análise = <strong>populações</strong>, não indivíduos. Correlaciona variáveis agregadas (ex: consumo de gordura per capita vs. incidência de câncer). Limitação principal: falácia ecológica.'},
+{cat:'Epidemiologia',q:'O que é Razão de Prevalência (RP)?',a:'Análoga ao RR, mas usada em <strong>estudos transversais</strong>. RP = prevalência nos expostos / prevalência nos não-expostos. Não deve ser chamada de RR porque não mede incidência.'},
+{cat:'Epidemiologia',q:'Qual rastreamento de câncer é indicado na APS para mulheres?',a:'<strong>Colo uterino:</strong> Papanicolaou dos 25 aos 64 anos (trienal após 2 normais). <strong>Mama:</strong> mamografia bienal dos 50 aos 69 anos (MS/Brasil). Rastreamento de ovário e endométrio NÃO é recomendado na população geral.'},
+{cat:'Epidemiologia',q:'Qual rastreamento de câncer colorretal é recomendado?',a:'Pesquisa de sangue oculto nas fezes (imunoquímico) <strong>anual</strong> a partir dos 50 anos, OU colonoscopia a cada 10 anos. Parar aos 75 anos (decisão compartilhada).'},
+
+// ══════════════════════════════════════════════
+// APS / MFC (30 cards)
+// ══════════════════════════════════════════════
+{cat:'APS/MFC',q:'Quais são os 4 atributos essenciais da APS (Starfield)?',a:'1. <strong>Acesso de primeiro contato</strong> (porta de entrada); 2. <strong>Longitudinalidade</strong> (vínculo ao longo do tempo); 3. <strong>Integralidade</strong> (espectro completo de necessidades); 4. <strong>Coordenação do cuidado</strong> (integração na rede).'},
+{cat:'APS/MFC',q:'O que é longitudinalidade?',a:'Acompanhamento da pessoa <strong>ao longo do tempo</strong>, independente de doença. Gera vínculo, confiança e conhecimento acumulado. Reduz custos, internações e melhora a acurácia diagnóstica.'},
+{cat:'APS/MFC',q:'O que diferencia longitudinalidade de continuidade?',a:'<strong>Longitudinalidade</strong> = relação pessoal duradoura entre equipe e usuário. <strong>Continuidade</strong> = seguimento de um episódio de doença, podendo envolver diferentes profissionais. Longitudinalidade é mais ampla.'},
+{cat:'APS/MFC',q:'O que é integralidade na APS?',a:'Reconhecimento do <strong>espectro completo</strong> de necessidades do paciente: promoção, prevenção, cura, reabilitação e paliação. Inclui oferta de serviços e articulação com outros níveis quando necessário.'},
+{cat:'APS/MFC',q:'O que é coordenação do cuidado?',a:'Integração de todas as ações e informações sobre o paciente. A equipe de APS <strong>coordena o percurso</strong> na rede, garantindo continuidade quando transita entre níveis (referência e contrarreferência).'},
+{cat:'APS/MFC',q:'Quais são os atributos derivados da APS?',a:'1. <strong>Orientação familiar:</strong> genograma, ecomapa, ciclo de vida familiar. 2. <strong>Orientação comunitária:</strong> conhecer território e determinantes sociais. 3. <strong>Competência cultural:</strong> respeitar diversidades.'},
+{cat:'APS/MFC',q:'O que é SIFE/FIFE no MCCP?',a:'Exploração da agenda do paciente (dimensão illness): <strong>S</strong>entimentos (Feelings), <strong>I</strong>deias (Ideas), <strong>F</strong>uncionalidade (Functioning), <strong>E</strong>xpectativas (Expectations).'},
+{cat:'APS/MFC',q:'Qual a diferença entre disease e illness no MCCP?',a:'<strong>Disease:</strong> dimensão biomédica — diagnóstico, fisiopatologia, exames (agenda do médico). <strong>Illness:</strong> experiência subjetiva da doença — sentimentos, crenças, impacto funcional (agenda do paciente).'},
+{cat:'APS/MFC',q:'Quais são os 7 passos da consulta na APS?',a:'1. Preparação; 2. Acolhimento/Abertura; 3. Exploração/Coleta; 4. Avaliação/Diagnóstico; 5. Plano de Cuidados; 6. Encerramento; 7. Reflexão e Registro.'},
+{cat:'APS/MFC',q:'O que é "contaminação da consulta"?',a:'Quando o paciente traz demandas <strong>no final</strong> da consulta ("ah, doutor, mais uma coisa..."), geralmente as mais importantes. Previne-se com boa abertura no Passo 2: identificar TODOS os motivos desde o início.'},
+{cat:'APS/MFC',q:'O que é decisão compartilhada?',a:'O plano de cuidados é <strong>negociado</strong> com o paciente, não imposto. Respeita seus valores, preferências e possibilidades. Melhora adesão e satisfação. É componente central do Passo 5 da consulta.'},
+{cat:'APS/MFC',q:'Para que serve o genograma?',a:'Representação gráfica da <strong>estrutura e relações familiares</strong> em pelo menos 3 gerações. Permite identificar padrões de doença, conflitos, recursos de suporte e dinâmicas que influenciam a saúde.'},
+{cat:'APS/MFC',q:'Para que serve o ecomapa?',a:'Representação gráfica das <strong>relações da família com o entorno</strong>: trabalho, escola, religião, vizinhos, serviços de saúde. Identifica fontes de apoio e de estresse social.'},
+{cat:'APS/MFC',q:'O que é espera vigilante (watchful waiting)?',a:'Estratégia de <strong>observação ativa</strong> sem intervenção imediata, com reavaliação programada. Ferramenta de prevenção quaternária. Usada em condições autolimitadas ou de baixo risco onde o tempo é aliado diagnóstico.'},
+{cat:'APS/MFC',q:'Quais os campos de ação da Carta de Ottawa (1986)?',a:'1. Políticas públicas saudáveis; 2. Ambientes favoráveis; 3. Reforço da ação comunitária; 4. Desenvolvimento de habilidades pessoais; 5. Reorientação dos serviços de saúde.'},
+{cat:'APS/MFC',q:'O que é promoção da saúde segundo Ottawa?',a:'Processo de <strong>capacitação da comunidade</strong> para atuar na melhoria de sua qualidade de vida e saúde, com maior participação no controle desse processo. Vai além da prevenção de doenças.'},
+{cat:'APS/MFC',q:'Qual o princípio fundamental da MFC segundo WONCA?',a:'Ser médico de <strong>primeiro contato</strong>, com abordagem centrada na pessoa, usando a consulta como ferramenta terapêutica, orientado pela família e comunidade, coordenando o cuidado na rede com base em evidências.'},
+{cat:'APS/MFC',q:'O que é o SOAP?',a:'Método de registro em prontuário: <strong>S</strong>ubjetivo (queixa, história), <strong>O</strong>bjetivo (exame físico, exames), <strong>A</strong>valiação (diagnóstico, classificação), <strong>P</strong>lano (conduta, orientações, retorno).'},
+{cat:'APS/MFC',q:'Quantos motivos de consulta o paciente médio traz?',a:'Em média <strong>1,6 motivos</strong> por consulta. Frequentemente o mais importante é mencionado por último. Por isso o Passo 2 (abertura) deve incluir a pergunta: "Tem mais alguma coisa?"'},
+{cat:'APS/MFC',q:'O que é autocuidado apoiado?',a:'Educação e empoderamento do paciente para <strong>automonitorização</strong> (PA, glicemia), reconhecimento de sinais de alarme e adesão terapêutica. O papel da APS é capacitar, não criar dependência.'},
+{cat:'APS/MFC',q:'Quais princípios da MFC se aplicam ao atendimento de demanda espontânea?',a:'Acesso (porta de entrada), integralidade (aproveitar para ações preventivas), e longitudinalidade (manter vínculo para retorno agendado). A demanda aguda é oportunidade para cuidado integral.'},
+{cat:'APS/MFC',q:'Qual a resolubilidade esperada da APS?',a:'A APS deve resolver <strong>>80% dos problemas</strong> de saúde da população adscrita, sem necessidade de encaminhamento para outros níveis de atenção.'},
+
+// ══════════════════════════════════════════════
+// CLÍNICA — SONO (20 cards)
+// ══════════════════════════════════════════════
+{cat:'Clínica',q:'Quais os critérios diagnósticos de insônia crônica?',a:'Dificuldade de iniciar/manter o sono ou despertar precoce, com comprometimento diurno, por <strong>≥3 meses</strong>, com frequência <strong>≥3x/semana</strong>, apesar de oportunidade adequada para dormir.'},
+{cat:'Clínica',q:'Qual o tratamento de primeira linha para insônia crônica?',a:'<strong>TCC para Insônia (TCC-I)</strong> — nível de evidência I. Superior aos benzodiazepínicos em longo prazo. Componentes: higiene do sono, controle de estímulos, restrição do sono, relaxamento, reestruturação cognitiva.'},
+{cat:'Clínica',q:'O que é terapia de controle de estímulos na insônia?',a:'Associar a cama APENAS a sono e sexo. Se não adormecer em <strong>15-20 minutos</strong>, levantar e fazer atividade relaxante em outro cômodo. Retornar ao leito apenas quando sentir sono novamente.'},
+{cat:'Clínica',q:'O que é terapia de restrição do sono?',a:'Limitar o <strong>tempo na cama</strong> ao tempo real de sono estimado pelo diário. Nunca reduzir abaixo de 5h. Aumentar 15-30 min/semana conforme eficiência do sono melhora (meta: >85%).'},
+{cat:'Clínica',q:'Por que evitar BZD em idosos para insônia?',a:'Potencialmente inapropriados (<strong>Critérios de Beers</strong>): risco de quedas, sedação residual, déficit cognitivo, tolerância e dependência. Alteram arquitetura do sono (reduzem sono profundo e REM).'},
+{cat:'Clínica',q:'Qual o papel da melatonina na insônia?',a:'Melhor evidência para <strong>distúrbios do ritmo circadiano</strong> e idosos (redução fisiológica da produção). Segura, com poucos efeitos adversos. Não é sedativo — regula o ciclo sono-vigília.'},
+{cat:'Clínica',q:'Quando indicar polissonografia na avaliação do sono?',a:'Não é rotina para insônia. Indicada na suspeita de: <strong>SAOS</strong> (apneia obstrutiva), movimentos periódicos dos membros, parassonias atípicas ou quando não há resposta à TCC-I.'},
+{cat:'Clínica',q:'O que é o diário do sono?',a:'Instrumento de autopreenchimento por <strong>≥2 semanas</strong>: registra horários de deitar/levantar, latência, despertares, cochilos, qualidade subjetiva. Essencial para diagnóstico e monitoramento da TCC-I.'},
+{cat:'Clínica',q:'O que é actigrafia?',a:'Sensor de punho que registra <strong>padrão sono-vigília</strong> ao longo de dias/semanas. Útil para avaliar irregularidades no ritmo circadiano. Menos invasiva que polissonografia.'},
+{cat:'Clínica',q:'Quais são as medidas de higiene do sono?',a:'Ambiente escuro, silencioso, temperatura adequada. Evitar telas 1h antes. <strong>Horários regulares</strong> para deitar e levantar. Evitar cafeína após 14h, álcool e exercício intenso à noite. Exposição solar matinal.'},
+{cat:'Clínica',q:'Qual o papel da trazodona na insônia?',a:'Antidepressivo sedativo usado <strong>off-label</strong> em doses baixas (25-100mg). Não causa dependência como BZD. Útil quando há comorbidade depressiva ou ansiedade. Pode causar hipotensão e priapismo (raro).'},
+{cat:'Clínica',q:'Insônia inicial, de manutenção e terminal — como diferenciar?',a:'<strong>Inicial:</strong> latência >30 min para adormecer (associada a ansiedade). <strong>Manutenção:</strong> despertares noturnos frequentes. <strong>Terminal:</strong> despertar precoce sem retornar ao sono (associada a depressão).'},
+{cat:'Clínica',q:'Quando investigar causas secundárias de insônia?',a:'Solicitar TSH (hiper/hipotireoidismo), <strong>ferritina</strong> (síndrome das pernas inquietas — ferritina <50), perfil hepático, glicemia. Avaliar medicamentos (corticoides, ISRS, betabloqueadores) e substâncias (cafeína, álcool).'},
+{cat:'Clínica',q:'Quais os riscos dos anti-histamínicos para insônia?',a:'<strong>Tolerância rápida</strong>, efeitos anticolinérgicos (boca seca, constipação, retenção urinária), sonolência residual. Não recomendados como primeira escolha para insônia crônica. Inapropriados em idosos.'},
+{cat:'Clínica',q:'O que é eficiência do sono e qual a meta?',a:'Tempo dormindo / tempo na cama × 100. Meta na TCC-I: <strong>>85%</strong>. Se eficiência <85%, reduzir tempo na cama (restrição do sono). Se >90%, pode aumentar 15-30 min.'},
+
+// ══════════════════════════════════════════════
+// PEDIATRIA — RESPIRATÓRIO (30 cards)
+// ══════════════════════════════════════════════
+{cat:'Pediatria',q:'Qual o principal agente da bronquiolite viral aguda?',a:'<strong>Vírus Sincicial Respiratório (VSR)</strong>. Outros: rinovírus, parainfluenza, metapneumovírus, adenovírus. Faixa etária: <2 anos, pico 2-6 meses.'},
+{cat:'Pediatria',q:'Qual o tratamento da BVA leve na APS?',a:'<strong>Suporte:</strong> hidratação, manter AM, lavagem nasal com SF 0,9%, cabeceira 30°, antitérmico SN. <strong>NÃO usar:</strong> ATB, broncodilatadores, corticoides, mucolíticos (sem evidência na BVA).'},
+{cat:'Pediatria',q:'O que o RX de tórax mostra na BVA?',a:'<strong>Hiperinsuflação bilateral e rebaixamento de cúpulas</strong> (aprisionamento aéreo). NÃO muda diagnóstico nem conduta. O RX não é obrigatório — o diagnóstico é clínico.'},
+{cat:'Pediatria',q:'Quais os sinais de alarme na BVA para encaminhar?',a:'FR >60 (<2m) ou >50 (2-12m), tiragem subcostal, BAN, cianose, <strong>SpO2 <92%</strong>, recusa alimentar, apneia (especialmente em <6 semanas), letargia/toxemia.'},
+{cat:'Pediatria',q:'Por que NÃO usar broncodilatador na BVA?',a:'A obstrução na BVA é por <strong>edema de mucosa e rolhas de muco</strong> nos bronquíolos, não por broncoespasmo puro. Broncodilatadores não melhoram desfechos e podem causar taquicardia e agitação.'},
+{cat:'Pediatria',q:'O que é OMA e quais os agentes principais?',a:'Otite Média Aguda: infecção da orelha média, geralmente pós-IVAS. Agentes: <strong>S. pneumoniae</strong> (mais comum), <strong>H. influenzae</strong> não tipável, <strong>M. catarrhalis</strong>.'},
+{cat:'Pediatria',q:'Quando indicar ATB na OMA?',a:'Indicações de ATB <strong>imediato</strong>: <2 anos com OMA bilateral, otorreia, sintomas graves (febre >39°C, otalgia >48h), perfuração timpânica. Em ≥2 anos com quadro unilateral leve: observação 48-72h com analgesia.'},
+{cat:'Pediatria',q:'Qual o ATB de primeira linha para OMA?',a:'<strong>Amoxicilina 50 mg/kg/dia</strong>, 12/12h, por 7-10 dias. Segunda linha: Amoxicilina + Clavulanato (se falha em 48-72h). Alérgicos a penicilina: eritromicina ou azitromicina.'},
+{cat:'Pediatria',q:'O que é mastoidite e qual a conduta?',a:'Complicação grave da OMA: tumefação retroauricular dolorosa com <strong>deslocamento anterior do pavilhão</strong>. Conduta: 1ª dose ceftriaxone IM + referir urgentemente. Pode evoluir para abscesso, meningite.'},
+{cat:'Pediatria',q:'Como diferenciar OMA de otite média com efusão?',a:'<strong>OMA:</strong> dor aguda + MT hiperemiada/abaulada + sinais inflamatórios. <strong>OME:</strong> líquido na orelha média <strong>sem sinais inflamatórios agudos</strong> — nível líquido, MT retraída/opaca. OME geralmente resolve espontaneamente.'},
+{cat:'Pediatria',q:'Por que S. pyogenes é raro em menores de 2-3 anos?',a:'Crianças <2-3 anos não possuem <strong>receptores</strong> para Streptococcus beta-hemolítico do grupo A nas tonsilas. Faringite nessa faixa etária é quase sempre viral.'},
+{cat:'Pediatria',q:'Como identificar Sd. Mão-Pé-Boca?',a:'Agente: <strong>Coxsackie</strong>. Febre + vesículas em boca, mãos e pés (palmas/plantas). Transmissão fecal-oral-respiratória. Autolimitada (~1 semana). Tratamento: sintomático.'},
+{cat:'Pediatria',q:'Diferença entre Sd. Mão-Pé-Boca e Herpangina?',a:'<strong>Mão-Pé-Boca:</strong> vesículas em boca + mãos + pés, febre moderada. <strong>Herpangina:</strong> pápulas cinzentas com halo eritematoso APENAS em orofaringe posterior/palato, febre alta súbita, sem lesões em extremidades. Ambos por Coxsackie.'},
+{cat:'Pediatria',q:'Como diferenciar Sd. Mão-Pé-Boca de gengivoestomatite herpética?',a:'<strong>Herpética (HSV):</strong> vesículas/úlceras em gengiva e lábios (terço anterior), gengivorragia, hálito fétido, adenopatia submandibular importante. <strong>Mão-Pé-Boca:</strong> úlceras em toda cavidade oral + lesões em mãos/pés.'},
+{cat:'Pediatria',q:'Quando pensar em amigdalite bacteriana?',a:'Critérios de Centor/McIsaac: idade >3 anos, <strong>exsudato tonsilar</strong>, adenopatia cervical anterior dolorosa, febre >38°C, AUSÊNCIA de tosse/coriza. Score ≥3 → considerar ATB.'},
+{cat:'Pediatria',q:'Qual ATB para amigdalite bacteriana e por que 10 dias?',a:'<strong>Penicilina Benzatina</strong> (dose única IM) OU Amoxicilina 50mg/kg/dia VO por <strong>10 dias</strong>. Os 10 dias visam erradicação do S. pyogenes e prevenção de febre reumática (não apenas melhora clínica).'},
+{cat:'Pediatria',q:'O que é SRAG e qual a conduta na APS?',a:'Febre + tosse/dor de garganta + dispneia OU SpO2 <95%. Conduta: <strong>notificação compulsória</strong>, coleta de painel viral, oseltamivir empírico em <48h (se indicado), encaminhamento urgente.'},
+{cat:'Pediatria',q:'Quais crianças têm indicação de oseltamivir na SG?',a:'Crianças <strong><5 anos</strong> (especialmente <2 anos), imunossuprimidos, portadores de doença crônica. Iniciar idealmente em <strong><48h</strong> do início dos sintomas. Dose conforme peso corporal.'},
+{cat:'Pediatria',q:'FR normal por faixa etária pediátrica?',a:'<strong>0-2 meses:</strong> até 60. <strong>2-11 meses:</strong> até 50. <strong>1-5 anos:</strong> até 40. <strong>6-8 anos:</strong> até 30. Valores acima = taquipneia = sinal de pneumonia na AIDPI.'},
+{cat:'Pediatria',q:'O que é sibilância recorrente no pré-escolar?',a:'≥3 episódios de sibilância em <strong>6 meses</strong> ou ≥2 em 1 ano. Deve-se considerar asma se: atopia pessoal/familiar, eczema, rinite alérgica, resposta a broncodilatador. Diagnóstico é clínico nessa faixa etária.'},
+{cat:'Pediatria',q:'Manejo da crise de sibilância moderada na AIDPI?',a:'Beta-2 agonista (salbutamol spray) <strong>3x a cada 20 min</strong> (até 3 doses) + <strong>1ª dose de corticoide VO</strong> (prednisolona 1-2mg/kg). Reavaliar: se melhorou, manter broncodilatador 6/6h por 5 dias + corticoide 3-5 dias.'},
+{cat:'Pediatria',q:'Dose de salbutamol spray na crise de sibilância?',a:'<strong><2 anos:</strong> 2-3 jatos/dose. <strong>≥2 anos:</strong> 2-4 jatos/dose (100 mcg/jato). Usar com espaçador. Pode repetir a cada 20 min por 3 doses na crise.'},
+{cat:'Pediatria',q:'Quando referir urgentemente na crise de sibilância?',a:'Crise <strong>grave</strong>: SpO2 <92%, incapacidade de falar/chorar, tiragem importante, cianose, ausência de sibilos (tórax silencioso), rebaixamento do nível de consciência, não melhora após 3 doses de beta-2.'},
+
+// ══════════════════════════════════════════════
+// PEDIATRIA — AIDPI (25 cards)
+// ══════════════════════════════════════════════
+{cat:'Pediatria',q:'Quais os sinais gerais de perigo na AIDPI?',a:'1. Não consegue beber ou mamar; 2. Vomita tudo; 3. Convulsões; 4. Letargia ou inconsciência. <strong>Qualquer um = referir urgentemente.</strong>'},
+{cat:'Pediatria',q:'Como a AIDPI classifica tosse com dificuldade respiratória?',a:'<strong>Vermelho (grave):</strong> sinal de perigo + tiragem + estridor → referir. <strong>Amarelo (pneumonia):</strong> respiração rápida → ATB ambulatorial. <strong>Verde (não é pneumonia):</strong> sem sinais → tratamento domiciliar sintomático.'},
+{cat:'Pediatria',q:'FR elevada por faixa etária (AIDPI)?',a:'<strong>2-11 meses:</strong> ≥50 irpm. <strong>1-5 anos:</strong> ≥40 irpm. Respiração rápida = classificação como PNEUMONIA → ATB ambulatorial (Amoxicilina).'},
+{cat:'Pediatria',q:'Planos A, B, C para diarreia (AIDPI)?',a:'<strong>A:</strong> sem desidratação → líquidos + SRO em casa após cada evacuação. <strong>B:</strong> desidratação → SRO 4h na UBS. <strong>C:</strong> desidratação grave → hidratação IV urgente + referir.'},
+{cat:'Pediatria',q:'Sinais de desidratação na AIDPI?',a:'<strong>Desidratação:</strong> olhos fundos, bebe com avidez/sede, sinal da prega lento. <strong>Grave:</strong> letargia/inconsciência, olhos muito fundos, não consegue beber, sinal da prega muito lento (>2s).'},
+{cat:'Pediatria',q:'Como classificar problema de ouvido na AIDPI?',a:'<strong>Mastoidite:</strong> tumefação retroauricular → referir urgente. <strong>Infecção aguda:</strong> dor + MT alterada OU otorreia <14d → ATB. <strong>Infecção crônica:</strong> otorreia ≥14d → secar + referir ORL. <strong>Sem infecção:</strong> nada.'},
+{cat:'Pediatria',q:'Como classificar dor de garganta na AIDPI?',a:'<strong>Grave (vermelho):</strong> sinais de perigo + abaulamento palato + membranas → referir. <strong>Bacteriana (amarelo):</strong> exsudato purulento + gânglios dolorosos → Pen. Benzatina/Amoxicilina. <strong>Viral (verde):</strong> hiperemia sem exsudato → sintomático.'},
+{cat:'Pediatria',q:'Quando retornar imediatamente segundo a AIDPI?',a:'Se a criança: <strong>não consegue beber/mamar</strong>, piora do estado geral, febre que não cede, respiração rápida, sangue nas fezes, dificuldade de beber líquidos.'},
+{cat:'Pediatria',q:'ATB de primeira linha para pneumonia na AIDPI?',a:'<strong>Amoxicilina 50mg/kg/dia</strong> VO, 12/12h, por 7 dias. Segunda linha: Amoxicilina + Clavulanato ou Eritromicina. Retorno em <strong>2 dias</strong> para reavaliação obrigatória.'},
+{cat:'Pediatria',q:'Classificação de desnutrição na AIDPI?',a:'<strong>Desnutrição grave:</strong> emagrecimento acentuado visível OU edema bilateral → referir. <strong>Peso muito baixo:</strong> P/I <-3 Z. <strong>Peso baixo ou ganho insuficiente:</strong> P/I entre -3 e -2 ou curva descendente.'},
+{cat:'Pediatria',q:'Como avaliar anemia na AIDPI?',a:'Observar <strong>palidez palmar</strong>: intensa → anemia grave (referir); leve → anemia → ferro + anti-helmíntico. Retorno em 14 dias. Não se usa hemograma de rotina na AIDPI.'},
+{cat:'Pediatria',q:'Anti-helmíntico na AIDPI: quando e como?',a:'Para crianças com ANEMIA, se <strong>não recebeu dose nos últimos 6 meses</strong>. Mebendazol 100mg/5ml: 500mg dose única (>1 ano) ou Albendazol 400mg dose única (>2 anos).'},
+{cat:'Pediatria',q:'Como tratar crise de sibilância na AIDPI?',a:'<strong>Moderada:</strong> beta-2 inalatório 3x/20min + corticoide VO. <strong>Grave:</strong> tratar e referir (O2 + NBZ + corticoide + ATB se pneumonia associada). Reavaliação após cada ciclo de 20 min.'},
+{cat:'Pediatria',q:'O que avaliar no retorno de 2 dias (pneumonia)?',a:'Sinais de perigo + FR + febre + aceitação alimentar. <strong>Piorou:</strong> referir + trocar ATB. <strong>Igual:</strong> trocar ATB (2ª linha) + retorno em 2 dias. <strong>Melhorou:</strong> completar 7 dias de ATB.'},
+{cat:'Pediatria',q:'Zinc na diarreia aguda — quando e como?',a:'Suplementação de <strong>zinco</strong> por 10-14 dias reduz duração e gravidade da diarreia, e previne novos episódios por 2-3 meses. <2 meses: 10mg/dia; ≥6 meses: 20mg/dia.'},
+
+// ══════════════════════════════════════════════
+// PEDIATRIA — PUERICULTURA / RN (30 cards)
+// ══════════════════════════════════════════════
+{cat:'Pediatria',q:'Esquema de suplementação de ferro para RN a termo com AME?',a:'<strong>1 mg/kg/dia de ferro elementar</strong> dos 6 aos 24 meses. Prematuros/baixo peso: 2 mg/kg/dia a partir de 30 dias até 12m, depois 1 mg/kg/dia até 24m.'},
+{cat:'Pediatria',q:'Sais ferrosos vs. férricos na suplementação?',a:'<strong>Ferrosos:</strong> menor custo, melhor absorção em jejum com vitamina C, mas mais efeitos GI. <strong>Férricos (ferripolimaltose):</strong> maior tolerância, não sofrem influência da dieta, podem ser dados com alimentos.'},
+{cat:'Pediatria',q:'Suplementação de vitamina A: doses e faixas etárias?',a:'<strong>6-11 meses:</strong> 100.000 UI (dose única). <strong>12-59 meses:</strong> 200.000 UI a cada 6 meses. Programa Nacional de Suplementação em áreas endêmicas.'},
+{cat:'Pediatria',q:'Quais as triagens neonatais e seus prazos?',a:'<strong>Pezinho:</strong> 3º-5º dia. <strong>Coraçãozinho:</strong> 24-48h (oximetria). <strong>Orelhinha (EOA):</strong> 24-48h. <strong>Olhinho (reflexo vermelho):</strong> 1ª consulta + 4º/6º/12ºm + 2a. <strong>Linguinha:</strong> antes da alta.'},
+{cat:'Pediatria',q:'O que o teste do coraçãozinho detecta?',a:'Cardiopatias congênitas críticas dependentes de canal arterial. Técnica: oximetria em <strong>MSD + MI</strong> entre 24-48h. Anormal: SpO2 <95% ou diferença >3% entre membros → ecocardiograma.'},
+{cat:'Pediatria',q:'O que o teste do olhinho (reflexo vermelho) detecta?',a:'Opacidades no eixo visual: <strong>retinoblastoma</strong>, catarata congênita, glaucoma congênito. Ausência de reflexo vermelho bilateral = referir oftalmologia urgente.'},
+{cat:'Pediatria',q:'Quais doenças o teste do pezinho rastreia (básico)?',a:'Fenilcetonúria, hipotireoidismo congênito, fibrose cística, doença falciforme e hemoglobinopatias, deficiência de biotinidase, hiperplasia adrenal congênita. Colher entre <strong>3º e 5º dia</strong> de vida.'},
+{cat:'Pediatria',q:'Perda de peso fisiológica do RN: limites?',a:'Até <strong>10%</strong> do peso ao nascer é normal. Recuperação esperada entre o <strong>10º-15º dia de vida</strong>. Perda >10% ou não recuperação até D15 → investigar problemas na amamentação.'},
+{cat:'Pediatria',q:'Fontanela anterior: formato, fechamento?',a:'<strong>Losangular (bregmática)</strong>, fecha entre 12-18 meses. Abaulada + tensa = hipertensão intracraniana. Deprimida = desidratação. Fontanela posterior (lambdóidea): triangular, fecha até ~2 meses.'},
+{cat:'Pediatria',q:'Quais situações contraindicam amamentação?',a:'<strong>HIV+</strong> (absoluta no Brasil), <strong>HTLV-1/2</strong>, galactosemia no RN. Drogas de abuso: interrupção temporária (álcool 2h/dose, cocaína/maconha 24h, anfetamina 24-36h).'},
+{cat:'Pediatria',q:'Quais os critérios de pega adequada na amamentação?',a:'Boca <strong>bem aberta</strong>, lábio inferior evertido, aréola mais visível <strong>acima</strong> da boca, queixo tocando a mama, bochechas arredondadas, sucção lenta/profunda com pausas. "Barriga com barriga."'},
+{cat:'Pediatria',q:'Até quando manter AME e AM complementado?',a:'<strong>AME até 6 meses</strong> (OMS/MS). Aleitamento materno complementado (com alimentação sólida) <strong>até 2 anos ou mais</strong>. Livre demanda desde a primeira hora de vida.'},
+{cat:'Pediatria',q:'Sono seguro do RN — orientações?',a:'Posição <strong>supina</strong>, coleito desaconselhado, colchão firme, sem travesseiros/objetos/cobertores soltos no berço. Temperatura ambiente adequada. Reduz risco de morte súbita.'},
+{cat:'Pediatria',q:'Manobras de Ortolani e Barlow: para que servem?',a:'Rastreamento de <strong>displasia do desenvolvimento do quadril</strong>. <strong>Ortolani:</strong> abdução → "clunk" = quadril luxado que reduz. <strong>Barlow:</strong> adução + pressão posterior → luxação provocada. Positivo → USG de quadril.'},
+{cat:'Pediatria',q:'Classificação do estado nutricional por Z-score?',a:'<strong>Eutrófico:</strong> -1 a +1. <strong>Risco:</strong> -2 a -1 ou +1 a +2. <strong>Baixo peso:</strong> -3 a -2. <strong>Muito baixo peso:</strong> < -3. <strong>Sobrepeso:</strong> +1 a +2. <strong>Obesidade:</strong> >+2 (P/E) ou >+3 (IMC/I).'},
+{cat:'Pediatria',q:'O que é desnutrição aguda (wasting)?',a:'E/I normal + <strong>P/E baixo</strong>: emagrecimento recente sem comprometimento do crescimento linear. Indica privação nutricional aguda. Reversível com reabilitação nutricional.'},
+{cat:'Pediatria',q:'O que é desnutrição crônica (stunting)?',a:'<strong>E/I baixo</strong> + P/E normal: comprometimento do crescimento linear por privação prolongada. Mais difícil de reverter, especialmente após os primeiros 1000 dias (janela crítica).'},
+{cat:'Pediatria',q:'Vacinas ao nascimento?',a:'<strong>BCG</strong> (dose única, idealmente nas primeiras 12h) + <strong>Hepatite B</strong> (1ª dose nas primeiras 12h de vida). BCG deixa cicatriz no deltóide direito — sua ausência após 6 meses pode indicar não-pega.'},
+{cat:'Pediatria',q:'Icterícia neonatal: zonas de Kramer?',a:'Progressão craniocaudal: <strong>Zona I:</strong> face (~5mg/dL). <strong>Zona II:</strong> tronco superior (~10). <strong>Zona III:</strong> abdome (~12). <strong>Zona IV:</strong> extremidades proximais (~15). <strong>Zona V:</strong> palmas/plantas (~18+). Zona III+ = dosar bilirrubina.'},
+{cat:'Pediatria',q:'Cuidados com o coto umbilical?',a:'Manter limpo e <strong>seco</strong>. Álcool 70% a cada troca de fralda (protocolo MS) ou apenas limpeza com água e sabão (OMS). Queda esperada entre 7-15 dias. Sinais de onfalite: hiperemia, secreção purulenta, odor → ATB.'},
+{cat:'Pediatria',q:'Transporte seguro do RN em automóvel?',a:'Bebê-conforto no <strong>banco traseiro, virado de costas</strong> para o painel. Até 1 ano ou 13kg. Após: cadeirinha virada para frente até 4 anos/18kg. Depois: assento de elevação até 7,5 anos.'},
+{cat:'Pediatria',q:'O que são reflexos primitivos e quando devem desaparecer?',a:'<strong>Moro:</strong> desaparece ~4-6m. <strong>Preensão palmar:</strong> ~4m. <strong>Preensão plantar:</strong> ~12m. <strong>Sucção:</strong> ~4m. <strong>Marcha reflexa:</strong> ~2m. <strong>Tônico cervical assimétrico:</strong> ~4m. Persistência além do esperado → investigar.'},
+{cat:'Pediatria',q:'Marcos do desenvolvimento neuromotor: 2 meses?',a:'<strong>2 meses:</strong> sorriso social, segue objetos além da linha média, levanta a cabeça em prona brevemente, emite sons guturais. Ausência → sinal de alerta.'},
+{cat:'Pediatria',q:'Marcos do desenvolvimento neuromotor: 6 meses?',a:'<strong>6 meses:</strong> senta com apoio, rola, transfere objetos entre as mãos, balbucia (ba-ba, ma-ma), reconhece estranhos (ansiedade de separação inicia ~8m).'},
+{cat:'Pediatria',q:'Quando introduzir alimentação complementar?',a:'A partir dos <strong>6 meses</strong> (nunca antes de 4m). Iniciar com frutas amassadas, papas salgadas com cereais, legumes, proteína animal. Manter AM. Evitar sal, açúcar e mel (<1 ano — botulismo).'},
+
+// ══════════════════════════════════════════════
+// SAZONALIDADE (10 cards)
+// ══════════════════════════════════════════════
+{cat:'Epidemiologia',q:'O que é Síndrome Gripal (SG)?',a:'Febre de início súbito (mesmo referida) + tosse OU dor de garganta + pelo menos um: cefaleia, mialgia, artralgia. Em <strong><2 anos:</strong> febre súbita + sintomas respiratórios sem outro diagnóstico específico.'},
+{cat:'Epidemiologia',q:'Definição de SRAG?',a:'SG + <strong>dispneia OU desconforto respiratório OU SpO2 <95%</strong> OU piora clínica. Em crianças: BAN, tiragem intercostal, desidratação. Notificação compulsória.'},
+{cat:'Epidemiologia',q:'Qual o papel da APS na sazonalidade respiratória?',a:'Classificação de risco no acolhimento, manejo de casos leves, <strong>identificação precoce de sinais de gravidade</strong>, vacinação oportuna, educação em saúde (etiqueta respiratória), notificação de SRAG.'},
+{cat:'Epidemiologia',q:'O que é nirsevimabe/palivizumabe?',a:'<strong>Anticorpos monoclonais contra VSR</strong> para imunização passiva de prematuros e crianças com comorbidades. Reduz internações por BVA grave. Nirsevimabe: dose única. Palivizumabe: mensal na sazonalidade.'},
+{cat:'Epidemiologia',q:'Quais os principais vírus respiratórios na sazonalidade do DF?',a:'VSR (principal em lactentes), <strong>Influenza A/B</strong>, SARS-CoV-2, rinovírus, metapneumovírus humano, parainfluenza, adenovírus. Picos entre março-julho no DF.'},
+{cat:'Epidemiologia',q:'Quando indicar oseltamivir na APS?',a:'SG com <strong>fatores de risco</strong> (<5 anos, gestantes, idosos ≥60, comorbidades crônicas, imunossuprimidos). Idealmente <48h de sintomas. Dose pediátrica conforme peso. Não esperar resultado de exame.'},
+{cat:'Epidemiologia',q:'Qual a diferença entre isolamento e quarentena?',a:'<strong>Isolamento:</strong> separa pessoas <em>doentes/infectadas</em> das saudáveis. <strong>Quarentena:</strong> restrição de atividades de pessoas <em>expostas</em> (contactantes) durante o período de incubação.'},
+
+// ══════════════════════════════════════════════
+// HAS / CRISES HIPERTENSIVAS / DISLIPIDEMIAS (25 cards)
+// ══════════════════════════════════════════════
+,{cat:'Clínica',q:'Como diagnosticar HAS no consultório?',a:'Medidas repetidas em <strong>pelo menos 2 consultas</strong> (intervalo 1-2 semanas), técnica adequada. Alternativas: MRPA ou MAPA. Uma medida isolada NÃO faz diagnóstico.'}
+,{cat:'Clínica',q:'Classificação da HAS (DBHA 2020)?',a:'<strong>Estágio 1:</strong> 140-159/90-99. <strong>Estágio 2:</strong> 160-179/100-109. <strong>Estágio 3:</strong> ≥180/≥110. Pré-HAS: 130-139/85-89. PA normal: 120-129/80-84.'}
+,{cat:'Clínica',q:'Quais as 4 classes de anti-hipertensivos de primeira linha?',a:'1. <strong>IECA</strong> (enalapril, ramipril). 2. <strong>BRA</strong> (losartana). 3. <strong>BCC</strong> (anlodipino). 4. <strong>Diuréticos tiazídicos</strong> (HCTZ, indapamida, clortalidona). NUNCA associar IECA + BRA.'}
+,{cat:'Clínica',q:'Quando iniciar com combinação de 2 drogas desde o início?',a:'HAS estágio 1 com <strong>risco CV alto</strong> ou HAS <strong>estágio 2+</strong>. Combinações preferenciais: IECA/BRA + BCC ou IECA/BRA + diurético tiazídico.'}
+,{cat:'Clínica',q:'Qual a diferença entre pseudocrise e urgência hipertensiva?',a:'<strong>Pseudocrise:</strong> PA alta SEM sintomas significativos e SEM LOA → repouso, retomar medicação, retorno 7d. <strong>Urgência:</strong> PA ≥180/120 COM sintomas significativos mas SEM LOA → captopril 25mg VO, reduzir PA em 24-48h.'}
+,{cat:'Clínica',q:'O que é emergência hipertensiva e qual a conduta?',a:'PA ≥180/120 <strong>COM lesão aguda de órgão-alvo</strong>: EAP, dissecção aórtica, encefalopatia, AVC, eclâmpsia, IAM. Conduta: <strong>SAMU → drogas IV em UTI</strong>. Redução controlada (não abrupta).'}
+,{cat:'Clínica',q:'Por que NÃO dar captopril sublingual na pseudocrise?',a:'Risco de <strong>hipotensão abrupta</strong> e isquemia. Na pseudocrise NÃO há LOA — a PA alta é crônica. Conduta: repouso, retomar/ajustar medicação habitual, MRPA, retorno em 7 dias.'}
+,{cat:'Clínica',q:'Quando suspeitar de HAS secundária?',a:'HAS em <strong><30 anos</strong> sem fatores de risco, HAS resistente (≥3 drogas + diurético), hipocalemia espontânea, sopro abdominal (estenose renal), creatinina subindo com IECA/BRA, paroxismos de palpitação/sudorese (feocromocitoma).'}
+,{cat:'Clínica',q:'O que é HAS resistente?',a:'PA não controlada apesar de <strong>≥3 anti-hipertensivos em dose otimizada</strong>, sendo um deles diurético. Antes de rotular: verificar adesão, técnica de medida, efeito do jaleco branco. Principal causa secundária: hiperaldosteronismo primário.'}
+,{cat:'Clínica',q:'Efeito colateral clássico do IECA?',a:'<strong>Tosse seca</strong> (5-20% dos pacientes), por acúmulo de bradicinina. Se intolerável, trocar por BRA (mesma eficácia, sem tosse). Outros: hipercalemia, angioedema (raro). CI absoluta: gestação.'}
+,{cat:'Clínica',q:'Efeito colateral clássico do BCC (anlodipino)?',a:'<strong>Edema maleolar</strong> dose-dependente, por vasodilatação arteriolar. Não é retenção hídrica — diurético não resolve. Se importante, reduzir dose ou trocar classe.'}
+,{cat:'Clínica',q:'Exames de rotina na avaliação inicial do hipertenso?',a:'Glicemia de jejum, HbA1c, CT/HDL/LDL/TG, creatinina (TFG), potássio, ácido úrico, EAS, ECG de repouso. Fundoscopia nos estágios 2-3. Albuminúria se diabético.'}
+,{cat:'Clínica',q:'Quais as metas de LDL conforme risco CV?',a:'<strong>Muito alto:</strong> <50. <strong>Alto:</strong> <70. <strong>Intermediário:</strong> <100. <strong>Baixo:</strong> <130 mg/dL. Estatinas são primeira linha. Alta potência: atorvastatina 40-80mg ou rosuvastatina 20-40mg.'}
+,{cat:'Clínica',q:'O que é acantose nigricans e o que sugere?',a:'Hiperpigmentação aveludada em dobras (pescoço, axilas). Sugere <strong>resistência insulínica</strong>. Comum em DM2, síndrome metabólica, obesidade. Em crianças obesas, sinal de alerta para investigar perfil metabólico.'}
+,{cat:'Clínica',q:'Quando HAS no jovem + sopro abdominal, pensar em quê?',a:'<strong>Estenose de artéria renal</strong> (displasia fibromuscular em jovens, aterosclerose em idosos). Pista: creatinina subindo >30% após iniciar IECA/BRA = estenose bilateral. Investigar com Doppler de artérias renais.'}
+,{cat:'Clínica',q:'TSH suprimido + HAS + taquicardia + tremor: diagnóstico?',a:'<strong>Hipertireoidismo</strong> como causa de HAS secundária. A tireotoxicose causa HAS sistólica isolada, taquicardia, tremor, perda de peso, sudorese. Confirmar com T4 livre. Tratar a causa.'}
+,{cat:'Clínica',q:'Medidas não farmacológicas na HAS?',a:'Restrição de sódio (<2g/dia), dieta DASH, atividade física aeróbica <strong>150 min/semana</strong>, controle de peso (IMC 18,5-24,9), moderação alcoólica, cessação do tabagismo, manejo do estresse.'}
+,{cat:'Clínica',q:'Qual anti-hipertensivo preferir em negros e idosos?',a:'<strong>BCC</strong> (anlodipino) ou <strong>diuréticos tiazídicos</strong> (clortalidona, indapamida). IECA/BRA têm menor resposta em monoterapia nessas populações, mas são bons em combinação.'}
+,{cat:'Clínica',q:'Qual a meta de PA no idoso ≥80 anos?',a:'Meta menos rigorosa: <strong>PAS <150 mmHg</strong> (evitar PAS <130 pelo risco de hipotensão, quedas e hipoperfusão). Avaliar individualmente a presença de comorbidades, fragilidade e tolerância.'}
+,{cat:'Clínica',q:'Quais LOA pesquisar no hipertenso?',a:'<strong>Coração:</strong> HVE (ECG/eco). <strong>Rins:</strong> albuminúria, creatinina/TFG. <strong>Olhos:</strong> retinopatia (fundoscopia). <strong>Vasos:</strong> doença arterial periférica, aterosclerose carotídea. <strong>Cérebro:</strong> AVC/AIT prévio.'}
+// ══════════════════════════════════════════════
+// NUTRIÇÃO AMPLIADA (5 cards extras)
+// ══════════════════════════════════════════════
+,{cat:'Pediatria',q:'Quantas exposições são necessárias para um novo alimento ser aceito?',a:'Em média <strong>8 a 10 exposições</strong>. Orientar mães/cuidadores que recusa inicial não significa aversão permanente. Não forçar — reforço positivo, ambiente tranquilo, sem telas.'}
+,{cat:'Pediatria',q:'Quando suspeitar de síndrome metabólica na criança?',a:'Circunferência abdominal <strong>acima do percentil 90</strong> + antecedente familiar de síndrome metabólica. Investigar: glicemia, perfil lipídico, PA. Acantose nigricans é sinal clínico de alerta.'}
+,{cat:'Pediatria',q:'Qual o programa nacional de micronutrientes em pó (NutriSUS)?',a:'Sachês com 15 vitaminas e minerais adicionados à refeição de crianças <strong>6-24 meses</strong> na APS. Prioriza beneficiários de programas de transferência de renda e indígenas de 6-59 meses.'}
+,{cat:'Pediatria',q:'Recomendação de vitamina D para RN?',a:'<strong>400 UI/dia</strong> desde a 1ª semana de vida até 12 meses, depois 600 UI/dia até 24 meses (SBP/AAP). Independe de AME — leite materno tem pouca vitamina D. Para prematuros >1500g: mesma dose.'}
+,{cat:'Pediatria',q:'Tempo de tela recomendado para crianças?',a:'<strong>≤1 hora/dia</strong> (exceto atividades escolares). Associação forte entre tempo de tela e obesidade. Estimular atividades físicas lúdicas — pelo menos 1h/dia de atividade moderada.'}
+
+,{cat:'Saúde da Mulher',q:'Quando iniciar ácido fólico pré-concepcional e em qual dose?',a:'<strong>5 mg/dia</strong>, iniciando <strong>60-90 dias antes</strong> da concepção. Previne defeitos do tubo neural (anencefalia, espinha bífida). Manter durante o 1º trimestre.'}
+,{cat:'Saúde da Mulher',q:'Quais anti-hipertensivos são contraindicados na gestação?',a:'<strong>IECA e BRA</strong> — teratogênicos (malformações renais, oligoâmnio). Na gestação, usar <strong>metildopa</strong> como 1ª escolha. Fora da gestação, metildopa NÃO é 1ª linha (trocar para IECA/BRA/BCC/diurético).'}
+,{cat:'Saúde da Mulher',q:'Qual anticonvulsivante tem MAIOR risco teratogênico?',a:'<strong>Ácido valproico</strong> (10,93% de malformações — dose-dependente). Preferir lamotrigina ou levetiracetam quando possível. NÃO suspender anticonvulsivante na gestação — ajustar no pré-concepcional.'}
+,{cat:'Saúde da Mulher',q:'Qual antidepressivo é 1ª escolha na gestação?',a:'<strong>Sertralina</strong> — maior segurança na gestação E lactação. Alternativas: fluoxetina, citalopram, escitalopram. Evitar paroxetina (risco cardíaco fetal). Não suspender antidepressivo sem ponderar risco de recaída.'}
+,{cat:'Saúde da Mulher',q:'Quais as 3 situações de aborto legal no Brasil?',a:'1. Gravidez por <strong>estupro</strong> (sem necessidade de BO). 2. <strong>Risco de vida</strong> para a gestante. 3. <strong>Anencefalia</strong> fetal (ADPF 54/STF 2012). O serviço deve garantir o atendimento mesmo se o profissional individual alegar objeção de consciência.'}
+,{cat:'Saúde da Mulher',q:'Diferença entre gestação não planejada e gestação indesejada?',a:'<strong>Não planejada:</strong> sem intenção de engravidar, mas pode ser aceita/desejada. <strong>Indesejada:</strong> a pessoa não quer ou não pode levar adiante. No Brasil, 55,4% das gestações não são planejadas.'}
+,{cat:'Saúde da Mulher',q:'O que avaliar na consulta pré-concepcional?',a:'IMC, ácido fólico, drogas/tabaco/álcool, medicamentos teratogênicos, testes rápidos (HIV/sífilis/hep B), toxoplasmose, imunizações (rubéola/varicela/hep B), tipagem ABO/Rh, PA, glicemia, citologia, risco laboral, saúde mental, violência.'}
+,{cat:'Saúde da Mulher',q:'O que é a Lei 9.263/96 (Planejamento Familiar)?',a:'Garante <strong>direitos iguais</strong> de constituição, limitação ou aumento da prole. Inclui acesso a métodos contraceptivos, laqueadura (>25 anos ou 2+ filhos, com 60 dias de reflexão), vasectomia, e orientação sobre fertilidade.'}
+];
+
+
+// ═══════════════════════════════════════
+// DATA: QUIZ QUESTIONS
+// ═══════════════════════════════════════
+const QUESTIONS = [
+// ══════ PEDIATRIA — RESPIRATÓRIO ══════
+{area:'Pediatria',case:'Júlia, 6 meses, febre há 3 dias, coriza, espirros, tosse noturna. AME mantido. Irmãos em creche. Tax 36,8°C, FR 64, FC 120, SpO2 97%. Ativa, sem desidratação, sem estridor.',q:'Qual o diagnóstico mais provável?',opts:['Pneumonia bacteriana','Bronquiolite viral aguda','Coqueluche','Laringite viral'],correct:1,exp:'Lactente <2 anos com IVAS + taquipneia (FR 64), contexto epidemiológico (irmãos em creche = fonte viral), sem estridor e com bom estado geral sugere <strong>BVA</strong>. Pico: 2-6 meses. Agente principal: VSR.'},
+{area:'Pediatria',case:'RX de tórax de Júlia (BVA) mostra rebaixamento de cúpulas diafragmáticas e hiperinsuflação bilateral.',q:'Esse achado radiológico muda o diagnóstico ou conduta?',opts:['Sim, indica asma','Sim, sugere pneumonia bacteriana','Não, achados compatíveis com BVA — conduta inalterada','Não, mas deve adicionar ATB'],correct:2,exp:'Hiperinsuflação + rebaixamento de cúpulas = aprisionamento aéreo, achado clássico da BVA. <strong>NÃO muda diagnóstico nem conduta.</strong> O RX não é obrigatório e o manejo continua sendo de suporte.'},
+{area:'Pediatria',case:'Júlia com BVA. Mãe pergunta se deve parar de amamentar.',q:'Sobre o aleitamento materno na BVA:',opts:['Suspender temporariamente','Manter — parte fundamental do tratamento','Substituir por fórmula espessada','Manter apenas se não houver esforço respiratório'],correct:1,exp:'<strong>Manter e incentivar o AM</strong>. Fornece anticorpos (IgA), hidratação e nutrição. Se dificuldade de mamar: fracionar (mamadas curtas e frequentes). Suspender só em desconforto grave (hospitalar, com sonda).'},
+{area:'Pediatria',case:'Pedro, 6 anos, resfriou há 1 semana, hoje acordou com otalgia. Tax 37°C, SpO2 98%. Otoscopia: OD com MT hiperemiada/abaulada; OE com nível líquido sem sinais inflamatórios.',q:'Diagnóstico e conduta?',opts:['OMA bilateral — Amoxicilina 10 dias','OMA direita + otite com efusão esquerda — ATB + observação','OMA bilateral — observação 48-72h','Otite externa — gotas tópicas'],correct:1,exp:'OD: <strong>OMA</strong> (MT abaulada/hiperemiada). OE: <strong>otite média com efusão</strong> (líquido sem inflamação aguda). ATB para OMA (Amoxicilina). OME é sequela do resfriado — resolve espontaneamente, apenas observação.'},
+{area:'Pediatria',case:'Pedro com tumefação dolorosa e eritematosa retroauricular, deslocamento anterior do pavilhão.',q:'Qual a complicação e conduta imediata?',opts:['Abscesso periauricular — drenagem','Mastoidite — ceftriaxone IM + referir urgente','Celulite facial — Amoxicilina + Clavulanato VO','Pericondrite — corticoide tópico'],correct:1,exp:'Tumefação retroauricular dolorosa + deslocamento do pavilhão = <strong>MASTOIDITE</strong>. Emergência: 1ª dose ceftriaxone IM + referir urgentemente. Pode evoluir para abscesso subperiosteal, meningite, trombose de seio sigmoide.'},
+{area:'Pediatria',case:'Alice, 4 anos, chiado crônico. Há 3 dias: febre 38,3°C, tosse, piora do chiado, inapetência. FR 44, BAN, tiragem intercostal, retração de fúrcula. MV rude + sibilos + estertores difusos.',q:'Diagnóstico e conduta?',opts:['BVA — suporte ambulatorial','Crise de asma leve — salbutamol spray','Pneumonia com broncoespasmo grave — tratar e referir urgente','IVAS com sibilância autolimitada'],correct:2,exp:'Múltiplos sinais de gravidade: FR >40, BAN, tiragem, retração de fúrcula. Sibilos + estertores + febre = <strong>pneumonia com broncoespasmo</strong>. Conduta: O2 + broncodilatador + corticoide VO + ATB + <strong>referir urgente</strong>.'},
+{area:'Pediatria',case:'Marcos, 2 anos, dor de garganta e inapetência. Tax 37,3°C. Vesículas e úlceras em boca, mãos e pés.',q:'Diagnóstico e conduta?',opts:['Amigdalite bacteriana — Amoxicilina','Gengivoestomatite herpética — Aciclovir','Sd. Mão-Pé-Boca — tratamento sintomático','Mononucleose — corticoide + repouso'],correct:2,exp:'2 anos + vesículas em boca/mãos/pés = <strong>Sd. Mão-Pé-Boca</strong> (Coxsackie). <2-3 anos não tem receptores para S. pyogenes. Autolimitada (~1 semana). Tratamento: antitérmico/analgésico + hidratação.'},
+{area:'Pediatria',case:'Lactente de 3 meses, prematuro (32 sem), com coriza há 2 dias, hoje com taquipneia (FR 68), tiragem subcostal, SpO2 90%, recusa mamadeira.',q:'Classificação e conduta?',opts:['BVA leve — tratar na APS com suporte','BVA moderada — observação na UBS por 4h','BVA grave — referir urgentemente ao hospital','Pneumonia — ATB ambulatorial + retorno em 2 dias'],correct:2,exp:'Prematuro <6 meses + SpO2 <92% + recusa alimentar + tiragem = <strong>BVA grave</strong>. Prematuridade é fator de risco para gravidade. Referir urgentemente para suporte hospitalar (O2, hidratação IV, monitorização).'},
+{area:'Pediatria',case:'Criança de 18 meses, febre há 24h, tosse produtiva, FR 52 irpm, tiragem subcostal, sem estridor, sem sinais gerais de perigo. SpO2 94%.',q:'Classificação AIDPI e conduta?',opts:['Não é pneumonia — sintomático','Pneumonia — Amoxicilina ambulatorial + retorno 2 dias','Pneumonia grave — referir urgente','SRAG — notificar + referir'],correct:2,exp:'FR >50 em <12m (<em>corrigindo: >50 em 2-11m</em>) mas esta criança tem 18m → FR >40 = rápida. <strong>Tiragem subcostal</strong> associada = sinais de gravidade → classificação como <strong>pneumonia grave</strong> → referir urgente + 1ª dose ATB.'},
+{area:'Pediatria',case:'Criança de 3 anos com dor de garganta. Exame: exsudato purulento bilateral em tonsilas, gânglios cervicais anteriores dolorosos, febre 39°C, sem tosse nem coriza.',q:'Diagnóstico e conduta?',opts:['Faringite viral — sintomático','Amigdalite bacteriana — Penicilina Benzatina ou Amoxicilina 10 dias','Mononucleose — sorologias','Sd. Mão-Pé-Boca — sintomático'],correct:1,exp:'Score de Centor/McIsaac alto: >3 anos, exsudato, adenopatia dolorosa, febre alta, <strong>ausência de tosse/coriza</strong>. Sugere <strong>amigdalite por S. pyogenes</strong>. ATB por 10 dias (prevenção de febre reumática).'},
+{area:'Pediatria',case:'Criança de 4 anos, febre baixa, vesículas em orofaringe posterior (palato mole e pilares), sem lesões em mãos/pés. Odinofagia intensa.',q:'Qual o diagnóstico mais provável?',opts:['Sd. Mão-Pé-Boca','Herpangina','Gengivoestomatite herpética','Amigdalite bacteriana'],correct:1,exp:'<strong>Herpangina:</strong> pápulas/vesículas cinzentas com halo eritematoso em orofaringe posterior/palato mole, sem lesões em extremidades. Também por Coxsackie. Diferencia-se da Mão-Pé-Boca pela <strong>ausência de lesões em mãos/pés</strong>.'},
+{area:'Pediatria',case:'Lactente de 8 meses com primeiro episódio de sibilância, febre baixa, coriza. Mãe solicita "bombinha" pois a vizinha disse que funciona.',q:'Qual a orientação correta sobre broncodilatador na BVA?',opts:['Prescrever salbutamol spray como solicitado','Prescrever NBZ com fenoterol','Explicar que broncodilatador NÃO tem benefício comprovado na BVA','Prescrever corticoide inalatório preventivo'],correct:2,exp:'Na BVA, a obstrução é por <strong>edema mucoso + muco</strong>, não broncoespasmo puro. Meta-análises mostram que broncodilatadores NÃO reduzem internação, tempo de doença nem SpO2 na BVA. Orientar: suporte + sinais de alarme.'},
+{area:'Pediatria',case:'Retorno de 2 dias: criança de 2 anos em uso de Amoxicilina por pneumonia (AIDPI). Mãe refere febre persistente, FR agora 56 irpm, tiragem subcostal.',q:'Qual a conduta segundo AIDPI?',opts:['Manter Amoxicilina e retorno em 3 dias','Trocar para Amoxicilina + Clavulanato + retorno em 2 dias','Criança piorou — referir urgentemente ao hospital','Associar corticoide inalatório'],correct:2,exp:'No retorno de 2 dias, se houver <strong>tiragem subcostal ou sinais gerais de perigo = criança PIOROU</strong>. Conduta AIDPI: dar dose de ATB de 2ª linha + <strong>referir urgentemente</strong> ao hospital.'},
+{area:'Pediatria',case:'Mãe traz criança de 14 meses com quadro gripal há 5 dias. Hoje refere que a criança está mais prostrada, com gemência e dificuldade para respirar. SpO2 93%.',q:'Qual a classificação e conduta?',opts:['Síndrome Gripal — sintomático + retorno se piora','SRAG — notificar + oseltamivir + referir urgente','Pneumonia não complicada — ATB ambulatorial','Bronquiolite — suporte na APS'],correct:1,exp:'SG + dispneia + SpO2 <95% + piora clínica = <strong>SRAG</strong>. Conduta: notificação compulsória, coleta de painel viral, oseltamivir (se <48h ou caso grave), <strong>referir urgente</strong> para hospitalização.'},
+
+// ══════ PEDIATRIA — PUERICULTURA ══════
+{area:'Pediatria',case:'RN de 4 dias, a termo, AME. Peso ao nascer: 3200g. Peso atual: 2950g.',q:'Avaliação da perda de peso:',opts:['7,8% — normal (até 10%); manter AME e acompanhar','7,8% — preocupante; indicar fórmula','7,8% — normal, mas solicitar TSH','7,8% — indicar internação'],correct:0,exp:'Perda de (3200-2950)/3200 = 7,8%, <strong>dentro do fisiológico (até 10%)</strong>. Recuperação esperada entre D10-D15. Avaliar técnica de amamentação e agendar retorno para verificar ganho ponderal.'},
+{area:'Pediatria',case:'RN de 2 dias. Teste do coraçãozinho: SpO2 MSD 98%, SpO2 MI 91%.',q:'Interpretação e conduta?',opts:['Normal — diferença < 10%','Anormal — diferença >3% e MI <95% → ecocardiograma urgente','Repetir em 24h antes de qualquer conduta','Anormal apenas se MSD <95%'],correct:1,exp:'Teste alterado: SpO2 <95% em qualquer membro OU <strong>diferença >3%</strong> entre MSD e MI. No caso: MI 91% (<95%) e diferença de 7% (>3%). Sugere cardiopatia congênita → <strong>ecocardiograma urgente</strong>.'},
+{area:'Pediatria',case:'RN de 10 dias, parto a termo. Mãe refere que o coto umbilical ainda não caiu e tem secreção amarelada e odor fétido. Hiperemia periumbilical com extensão de 2cm.',q:'Diagnóstico e conduta?',opts:['Normal — coto pode cair até 21 dias','Onfalite — ATB sistêmico + referir se grave','Granuloma umbilical — cauterização com nitrato de prata','Hérnia umbilical — observação'],correct:1,exp:'Secreção purulenta + odor fétido + hiperemia periumbilical = <strong>onfalite</strong>. É infecção grave no RN (porta de entrada para sepse). Hiperemia >2cm da base = grave → referir. ATB sistêmico (cobertura para S. aureus e gram-negativos).'},
+{area:'Pediatria',case:'Mãe HIV+ pergunta se pode amamentar seu RN. Brasil.',q:'Orientação correta no Brasil:',opts:['Pode amamentar se carga viral indetectável','Contraindicação absoluta no Brasil — orientar sobre fórmula + direitos','Pode amamentar se usar ARV durante a amamentação','Pode amamentar por até 6 meses se em TARV'],correct:1,exp:'No Brasil, amamentação é <strong>contraindicação absoluta</strong> em mães HIV+, independente da carga viral (diferente de recomendações da OMS para países de baixa renda). A mãe tem direito a fórmula infantil gratuita pelo MS por 6 meses.'},
+{area:'Pediatria',case:'Lactente de 9 meses, AME até 6 meses, agora com alimentação complementar. Pediatra anterior não prescreveu ferro. Mãe pergunta se precisa.',q:'Conduta quanto à suplementação de ferro:',opts:['Não precisa — AME até 6m é suficiente','Iniciar 1mg/kg/dia de ferro elementar — já deveria estar tomando desde os 6m','Solicitar hemograma primeiro, só suplementar se anemia','Iniciar apenas após 12 meses'],correct:1,exp:'RN a termo com AME: suplementação de ferro <strong>1mg/kg/dia a partir dos 6 meses até 24 meses</strong>. Aos 9 meses já deveria estar recebendo. Iniciar imediatamente sem necessidade de hemograma prévio (recomendação SBP/MS).'},
+{area:'Pediatria',case:'RN prematuro (30 semanas), peso 1200g, com 35 dias de vida.',q:'Esquema de suplementação de ferro para este RN?',opts:['1mg/kg/dia a partir dos 6 meses','2mg/kg/dia desde 30 dias até 12m, depois 1mg/kg/dia até 24m','Não suplementar — aguardar resultado de hemograma','3mg/kg/dia a partir dos 2 meses'],correct:1,exp:'Prematuro/baixo peso: <strong>2mg/kg/dia a partir de 30 dias</strong> até 12 meses, depois 1mg/kg/dia até 24 meses. Dose maior pela menor reserva de ferro. Já está com 35 dias → iniciar agora.'},
+
+// ══════ PEDIATRIA — AIDPI ══════
+{area:'Pediatria',case:'Criança de 3 anos, diarreia há 2 dias. Olhos fundos, bebe com avidez, sinal da prega lento.',q:'Classificação AIDPI e plano terapêutico?',opts:['Sem desidratação — Plano A','Desidratação — Plano B (SRO 4h na UBS)','Desidratação grave — Plano C (IV urgente)','Diarreia persistente — referir gastro'],correct:1,exp:'Olhos fundos + sede/avidez + prega lenta = <strong>DESIDRATAÇÃO</strong> (sem sinais de gravidade). Plano B: SRO no serviço por <strong>4 horas</strong>, reavaliar, orientar Plano A para casa se melhorar.'},
+{area:'Pediatria',case:'Criança de 2 anos com diarreia há 3 dias. Letárgica, olhos muito fundos, sinal da prega muito lento (>2s), não consegue beber.',q:'Classificação e conduta?',opts:['Desidratação — Plano B','Desidratação grave — Plano C (hidratação IV urgente)','Sem desidratação — Plano A com observação','Diarreia persistente grave — referir'],correct:1,exp:'Letargia + não consegue beber + prega muito lenta = <strong>DESIDRATAÇÃO GRAVE</strong>. Plano C: hidratação IV (SF 0,9% ou Ringer) urgente. Se não houver acesso IV, considerar sonda nasogástrica ou via intraóssea. Referir.'},
+{area:'Pediatria',case:'Criança de 4 anos com diarreia sanguinolenta (disenteria) há 2 dias.',q:'Conduta segundo AIDPI?',opts:['Apenas SRO e observação','ATB (ceftriaxone) + SRO + retorno em 2 dias','Metronidazol + SRO','Anti-diarreico (loperamida) + SRO'],correct:1,exp:'Diarreia com sangue = <strong>disenteria</strong>. AIDPI: ATB de 1ª linha <strong>ceftriaxone IM</strong> (ou SMZ-TMP VO) + SRO + retorno em 2 dias. Anti-diarreicos são <strong>contraindicados</strong> em crianças (risco de íleo paralítico).'},
+{area:'Pediatria',case:'Criança de 8 meses, palidez palmar leve, peso/idade adequado, sem outros sinais.',q:'Classificação e conduta AIDPI?',opts:['Normal — sem conduta','Anemia — sulfato ferroso + anti-helmíntico + retorno 14 dias','Anemia grave — referir urgente + hemotransfusão','Desnutrição — encaminhar nutricionista'],correct:1,exp:'Palidez palmar leve = <strong>ANEMIA</strong>. Conduta: ferro VO (sulfato ferroso) por 4 semanas + anti-helmíntico (se >1 ano e não recebeu nos últimos 6m). Retorno em <strong>14 dias</strong> para reavaliar palidez.'},
+{area:'Pediatria',case:'Criança de 3 anos, PC -2,5 DP, ausência de marcos motores da faixa etária anterior, 2 alterações fenotípicas.',q:'Classificação AIDPI do desenvolvimento?',opts:['Desenvolvimento normal','Desenvolvimento normal com fatores de risco','Alerta para o desenvolvimento','Provável atraso no desenvolvimento'],correct:3,exp:'Ausência de marcos da faixa anterior + PC <-2 DP + alterações fenotípicas = <strong>PROVÁVEL ATRASO DO DESENVOLVIMENTO</strong>. Conduta: referir para avaliação neuropsicomotora especializada.'},
+
+// ══════ APS/MFC ══════
+{area:'APS/MFC',case:'D. Joana pede atestado de 7 dias para cuidar dos 4 filhos doentes.',q:'Conduta mais adequada do Dr. Carlos?',opts:['Fornecer atestado sem ressalvas','Recusar — sem justificativa médica','Avaliar Joana integralmente (MCCP) e, se adoecida, fornecer atestado fundamentado','Orientar procurar saúde ocupacional'],correct:2,exp:'O MCCP orienta entender a pessoa como um todo. Joana pode ter exaustão/adoecimento real. Se identificar comprometimento (ansiedade, esgotamento), pode fornecer atestado com CID pertinente à <strong>condição dela</strong>. Nunca falsificado.'},
+{area:'APS/MFC',case:'Maria Elvira, 62 anos, HAS, DM2, obesa, sedentária, tabagista. Veio renovar receita.',q:'Qual ação exemplifica prevenção quaternária?',opts:['Solicitar todos os exames de rastreamento possíveis','Ponderar risco-benefício de cada intervenção, evitar cascata diagnóstica','Iniciar imediatamente estatina + AAS + IECA','Encaminhar para cardiologista'],correct:1,exp:'Prevenção quaternária = proteger de intervenções desnecessárias. Investigar com critério, ponderar cada exame/medicação pelo <strong>risco-benefício individual</strong>. Não significa não investigar — significa não medicalizar excessivamente.'},
+{area:'APS/MFC',case:'Dr. Carlos atende os 4 filhos de Joana aproveitando a demanda aguda, embora o motivo inicial fosse apenas a Júlia.',q:'Qual atributo da APS está sendo exercido?',opts:['Acesso de primeiro contato','Integralidade','Coordenação do cuidado','Competência cultural'],correct:1,exp:'<strong>Integralidade</strong> = reconhecer o espectro completo de necessidades. Ir além da queixa pontual para abordar necessidades globais da família, incluindo promoção e prevenção oportunísticas.'},
+{area:'APS/MFC',case:'Paciente de 45 anos vem à UBS toda semana com queixas vagas (cefaleia, dores difusas, insônia). Exames sempre normais. Pede novos exames a cada consulta.',q:'Qual conceito melhor se aplica a esta situação?',opts:['A paciente precisa de mais exames complementares','É um caso para prevenção quaternária — proteger de medicalização excessiva','Encaminhar para especialista de cada queixa','Solicitar TC de crânio para investigar cefaleia'],correct:1,exp:'Queixas vagas recorrentes + exames normais + pedidos repetidos = risco de <strong>cascata diagnóstica</strong>. Prevenção quaternária: explorar a dimensão illness (SIFE), identificar o que motiva as consultas (ansiedade? solidão? somatização?), evitar exames desnecessários.'},
+{area:'APS/MFC',case:'Paciente crônico com HAS e DM, bem controlado, pede para Dr. Carlos encaminhá-lo ao cardiologista "para fazer um check-up completo".',q:'Melhor abordagem do MFC?',opts:['Encaminhar imediatamente — direito do paciente','Explicar que a APS coordena o cuidado e que ele já está sendo acompanhado adequadamente, discutindo a necessidade real','Recusar o encaminhamento sem explicação','Encaminhar, mas pedir que volte com os resultados'],correct:1,exp:'<strong>Coordenação do cuidado</strong>: a APS é quem decide a necessidade de encaminhamento baseado em critérios clínicos. Explicar com respeito que o acompanhamento está adequado. Se houver indicação real, encaminhar com contrarreferência.'},
+{area:'APS/MFC',case:'Consulta de puericultura. Mãe relata que a avó dá chá de erva-doce para cólica do bebê de 2 meses.',q:'Como abordar esta situação à luz da competência cultural?',opts:['Proibir imediatamente — risco de contaminação','Ignorar — não é relevante clinicamente','Acolher o saber familiar, informar riscos (contaminação, interferência no AM) e negociar alternativas, respeitando a cultura','Concordar para não criar conflito'],correct:2,exp:'<strong>Competência cultural</strong>: respeitar saberes tradicionais sem ser negligente. Acolher a prática, explicar riscos (risco de contaminação, redução do AME), e <strong>negociar</strong> alternativas (massagem abdominal, técnica de amamentação). Decisão compartilhada.'},
+{area:'APS/MFC',case:'Médico atende paciente pela primeira vez. Antes de chamá-lo, revisa prontuário, resultados de exames pendentes e último atendimento.',q:'Qual passo da Consulta em 7 Passos está sendo realizado?',opts:['Passo 1 — Preparação','Passo 2 — Acolhimento','Passo 3 — Exploração','Passo 7 — Reflexão'],correct:0,exp:'<strong>Passo 1 — Preparação:</strong> ocorre ANTES da consulta. Inclui revisar prontuário, resultados pendentes, história prévia e contexto familiar. Permite antecipar demandas e otimizar o tempo de consulta.'},
+{area:'APS/MFC',case:'Durante consulta, paciente conta sobre sua doença. Médico pergunta: "Como isso tem afetado o seu dia a dia?" e "O que você acha que pode ser?"',q:'Qual dimensão do MCCP está sendo explorada?',opts:['Disease (doença biomédica)','Illness (experiência da doença — SIFE/FIFE)','Plano terapêutico','Contexto comunitário'],correct:1,exp:'Perguntar sobre impacto funcional e crenças = explorar a <strong>agenda do paciente (illness)</strong>: Sentimentos, Ideias, Funcionalidade e Expectativas (SIFE/FIFE). É o diferencial do MCCP em relação à consulta biomédica tradicional.'},
+
+// ══════ EPIDEMIOLOGIA ══════
+{area:'Epidemiologia',case:'UBS planeja rastreamento de DM2 na comunidade.',q:'Qual condição NÃO é critério de Wilson & Jungner?',opts:['A doença deve ter alta mortalidade em 5 anos','Deve existir tratamento efetivo para fase precoce','Testes devem ser aceitáveis pela população','História natural deve ser bem conhecida'],correct:0,exp:'Os critérios exigem que a doença seja <strong>problema de saúde pública importante</strong>, não especificamente "alta mortalidade em 5 anos". DM2 justifica rastreamento porque tem fase pré-clínica detectável e tratamento precoce que muda prognóstico.'},
+{area:'Epidemiologia',case:'Estudo avaliou novo teste de rastreamento para câncer de pulmão. O teste detectou muitos nódulos pequenos que, após biópsia, mostraram-se benignos ou indolentes.',q:'Qual viés/dano do rastreamento este cenário ilustra?',opts:['Viés de lead-time','Viés de length bias','Sobrediagnóstico (overdiagnosis)','Viés do voluntário saudável'],correct:2,exp:'Detecção de lesões que nunca causariam sintomas/morte = <strong>sobrediagnóstico</strong>. Principal dano do rastreamento. Gera ansiedade, biópsias desnecessárias, e tratamentos com efeitos adversos sem benefício real.'},
+{area:'Epidemiologia',case:'Programa de rastreamento de câncer de mama mostrou que mulheres rastreadas sobreviviam em média 8 anos após diagnóstico, vs. 5 anos no grupo não rastreado.',q:'Essa diferença prova que o rastreamento é efetivo?',opts:['Sim — 3 anos a mais de sobrevida é significativo','Não necessariamente — pode ser viés de lead-time','Sim — se p < 0,05','Não — porque deveria ser estudo caso-controle'],correct:1,exp:'<strong>Viés de lead-time:</strong> o rastreamento detecta a doença mais cedo, antecipando o diagnóstico sem necessariamente alterar a data de morte. A "maior sobrevida" pode ser apenas o tempo entre diagnóstico antecipado e a mesma morte.'},
+{area:'Epidemiologia',case:'Pesquisador quer estudar se um novo medicamento reduz mortalidade por ICC.',q:'Qual o melhor desenho de estudo?',opts:['Estudo transversal','Estudo caso-controle','Estudo de coorte retrospectiva','Ensaio clínico randomizado (ECR)'],correct:3,exp:'Para avaliar <strong>eficácia de intervenção terapêutica</strong>, o padrão-ouro é o <strong>ECR</strong>. Permite randomização (elimina confundidores), cegamento, e estabelece causalidade. Maior nível de evidência individual.'},
+{area:'Epidemiologia',case:'Estudo comparou prevalência de HAS entre homens e mulheres em uma cidade, entrevistando 1000 pessoas em um único dia.',q:'Qual o tipo de estudo?',opts:['Coorte prospectiva','Caso-controle','Transversal (corte transversal)','Ecológico'],correct:2,exp:'Mediu exposição (sexo) e desfecho (HAS) <strong>no mesmo momento</strong> → estudo <strong>transversal</strong>. Calcula prevalência. Limitação: não estabelece temporalidade/causalidade (a "fotografia" não mostra o que veio antes).'},
+{area:'Epidemiologia',case:'Pesquisador selecionou 200 pacientes com câncer de pulmão e 200 controles sem câncer, e investigou se fumavam no passado.',q:'Tipo de estudo e medida de associação?',opts:['Coorte — Risco Relativo','Caso-controle — Odds Ratio','Transversal — Razão de Prevalência','ECR — NNT'],correct:1,exp:'Partiu do <strong>desfecho</strong> (câncer sim/não) e investigou exposição passada (tabagismo) → <strong>caso-controle</strong>. Medida: Odds Ratio. É retrospectivo. Bom para doenças raras. Limitação: viés de memória.'},
+{area:'Epidemiologia',case:'Estudo acompanhou 5000 trabalhadores expostos a asbesto por 20 anos e comparou a incidência de mesotelioma com trabalhadores não expostos.',q:'Tipo de estudo e medida de associação?',opts:['Caso-controle — OR','Coorte prospectiva — Risco Relativo','Transversal — RP','Ecológico — correlação'],correct:1,exp:'Partiu da <strong>exposição</strong> (asbesto) e acompanhou para verificar <strong>incidência</strong> do desfecho (mesotelioma) → <strong>coorte prospectiva</strong>. Medida: RR. Estabelece temporalidade. Mais caro e demorado que caso-controle.'},
+{area:'Epidemiologia',case:'Em um país, o consumo médio de carne per capita é alto e a incidência de câncer colorretal também. Pesquisador conclui que comer carne causa câncer.',q:'Qual o principal erro desta conclusão?',opts:['Viés de seleção','Viés de aferição','Falácia ecológica','Viés de publicação'],correct:2,exp:'Dados agregados (país) não podem ser extrapolados para indivíduos = <strong>falácia ecológica</strong>. A associação no nível populacional não prova que os indivíduos que comem mais carne são os que desenvolvem câncer.'},
+{area:'Epidemiologia',case:'Teste rápido para HIV: sensibilidade 99%, especificidade 99%. Prevalência na população geral: 0,1%.',q:'Se o teste der positivo, qual a probabilidade de ser realmente HIV+?',opts:['99%','50%','~9% (VPP baixo pela baixa prevalência)','0,1%'],correct:2,exp:'Com prevalência 0,1%: em 10.000 pessoas, 10 são HIV+ (teste detecta ~10). Dos 9.990 negativos, ~100 terão falso-positivo (1%). VPP = 10/(10+100) ≈ <strong>9%</strong>. Em populações de baixa prevalência, mesmo testes excelentes têm VPP baixo.'},
+{area:'Epidemiologia',case:'Estudo mostra que droga X reduziu mortalidade de 4% para 3% (RAR = 1%, RRR = 25%). NNT = 100.',q:'Qual a interpretação clínica do NNT?',opts:['A droga é muito eficaz — RRR de 25%','Precisa tratar 100 pacientes para evitar 1 morte — benefício modesto','NNT de 100 significa que a droga é ineficaz','O NNT deveria ser 25 pela RRR'],correct:1,exp:'NNT = 1/RAR = 1/0,01 = <strong>100</strong>. Significa que é necessário tratar 100 pacientes para evitar 1 evento. A RRR (25%) parece impressionante, mas a <strong>RAR (1%)</strong> e o NNT revelam o benefício real, que é modesto. Sempre analisar ambos.'},
+
+// ══════ CLÍNICA — SONO ══════
+{area:'Clínica',case:'Mulher de 45 anos, insônia há 6 meses (≥4x/sem, latência >40 min). Usa clonazepam 2mg há 3 meses sem melhora.',q:'Melhor abordagem?',opts:['Aumentar clonazepam para 4mg','Trocar para zolpidem 10mg','Iniciar TCC-I + desmame gradual do clonazepam','Adicionar trazodona ao clonazepam'],correct:2,exp:'Insônia crônica com BZD sem resposta. <strong>TCC-I é 1ª linha</strong> com eficácia sustentada. Clonazepam gera tolerância/dependência → desmame gradual. Trocar por outro sedativo perpetua o problema.'},
+{area:'Clínica',case:'Paciente de 70 anos, insônia de manutenção. Filho pede receita de diazepam porque "sempre funcionou para a avó".',q:'Conduta adequada?',opts:['Prescrever diazepam em dose baixa','Recusar e não oferecer alternativa','Explicar riscos dos BZD em idosos (Beers) e propor melatonina ou TCC-I','Prescrever prometazina como alternativa mais segura'],correct:2,exp:'BZD em idosos: <strong>Critérios de Beers</strong> — risco de quedas, sedação residual, déficit cognitivo. Prometazina (anticolinérgico) também é inapropriada. Preferir <strong>TCC-I, melatonina ou trazodona</strong> em dose baixa.'},
+{area:'Clínica',case:'Paciente com insônia inicial (demora >30min para dormir). Relata que fica na cama assistindo séries no celular e "esperando o sono vir".',q:'Qual componente da TCC-I é mais relevante aqui?',opts:['Restrição do sono','Controle de estímulos — cama apenas para sono e sexo','Reestruturação cognitiva','Relaxamento muscular progressivo'],correct:1,exp:'<strong>Controle de estímulos:</strong> a cama foi associada a atividade (telas, assistir séries) em vez de sono. Orientar: cama APENAS para sono/sexo, evitar telas 1h antes, se não dormir em 15-20 min → levantar e fazer atividade relaxante.'},
+{area:'Clínica',case:'Paciente com insônia, queixa de pernas inquietas ao deitar. Ferritina sérica: 18 ng/mL.',q:'Qual a conduta prioritária?',opts:['BZD para relaxar as pernas','Suplementação de ferro — ferritina <50 sugere deficiência associada à SPI','Gabapentina imediatamente','Polissonografia urgente'],correct:1,exp:'Síndrome das Pernas Inquietas com <strong>ferritina <50 ng/mL</strong> → suplementar ferro (meta: ferritina >75). A deficiência de ferro é causa tratável de SPI. Se não melhorar após reposição, considerar agonistas dopaminérgicos ou gabapentina.'},
+
+// ══════ PROMOÇÃO DA SAÚDE ══════
+{area:'APS/MFC',case:'João Carlos, 55 anos, HAS, DM2, tabagista, sedentário, obeso. Veio para check-up.',q:'Qual rastreamento está indicado para este paciente?',opts:['Apenas renovar receitas — não precisa de rastreamento','Glicemia/HbA1c, lipídios, função renal, ECG, fundo de olho, exame dos pés, PSA','Glicemia, lipídios, função renal, ECG, fundo de olho, exame dos pés (sem PSA de rotina)','TC de coronárias + teste ergométrico + PSA + colonoscopia'],correct:2,exp:'Rastreamentos indicados: HbA1c, perfil lipídico, função renal (creatinina/TFG/albuminúria), ECG periódico, fundo de olho (retinopatia), exame dos pés (neuropatia). <strong>PSA não é recomendado como rastreamento de rotina</strong> (risco de sobrediagnóstico). Decisão compartilhada.'},
+{area:'APS/MFC',case:'Paciente de 52 anos, assintomático, sem fatores de risco para câncer colorretal.',q:'Qual rastreamento de câncer colorretal é recomendado?',opts:['Colonoscopia anual a partir dos 45 anos','Sangue oculto nas fezes (imunoquímico) anual a partir dos 50 anos','Retossigmoidoscopia mensal','Não é necessário rastreamento antes dos 60'],correct:1,exp:'Rastreamento de câncer colorretal recomendado a partir dos <strong>50 anos</strong>: sangue oculto nas fezes imunoquímico <strong>anual</strong> OU colonoscopia a cada 10 anos. Parar aos 75 anos (decisão compartilhada entre 76-85).'},
+{area:'APS/MFC',case:'Mulher de 30 anos, sexualmente ativa, último Papanicolaou há 1 ano (normal). Anterior também normal.',q:'Quando repetir o Papanicolaou?',opts:['Anualmente — protocolo padrão','Em 3 anos — após 2 exames normais consecutivos, trienalizar','Em 5 anos — baixo risco','Não precisa mais — 2 normais é suficiente'],correct:1,exp:'Rastreamento de colo uterino no Brasil (INCA/MS): Papanicolaou dos 25-64 anos. Após <strong>2 exames anuais normais consecutivos</strong>, intervalo passa a <strong>trienal</strong>. No caso: próximo em 2 anos (para completar trienalização).'},
+
+// ══════ QUESTÕES ADICIONAIS — LOTE 2 ══════
+
+// PEDIATRIA extra
+{area:'Pediatria',case:'Criança de 11 meses, AME até 6m, alimentação complementar adequada. Mãe quer saber se precisa de leite de vaca.',q:'Orientação sobre leite de vaca no 1º ano de vida:',opts:['Pode introduzir leite de vaca integral a partir de 9 meses','Leite de vaca NÃO deve ser introduzido antes de 12 meses — manter AM ou fórmula','Pode dar leite de vaca diluído a partir de 6 meses','Leite de vaca desnatado é permitido a partir de 8 meses'],correct:1,exp:'Leite de vaca integral é <strong>pobre em ferro e zinco</strong>, rico em proteínas de difícil digestão e pode causar micro-hemorragias intestinais. <strong>Não recomendado antes de 12 meses.</strong> Manter AM ou, se necessário, fórmula infantil.'},
+{area:'Pediatria',case:'Mãe traz lactente de 4 meses ao PS. Refere que o bebê "não para de chorar", está irritado, sem febre. Ao exame: fontanela anterior abaulada e tensa.',q:'O que a fontanela abaulada sugere e qual a conduta?',opts:['Normal — bebês choram','Desidratação — hidratar','Hipertensão intracraniana — referir urgente para investigação','Fontanela abaulada é normal quando o bebê chora — observar'],correct:2,exp:'Fontanela abaulada e <strong>tensa</strong> sugere hipertensão intracraniana (meningite, hidrocefalia, hemorragia). A fontanela pode ficar levemente tensa com choro forte, mas se persistir em repouso → <strong>referir urgente</strong>. Fontanela deprimida = desidratação.'},
+{area:'Pediatria',case:'Criança de 5 meses, primeira consulta na UBS. Mãe refere AME. Ao exame: BCG sem cicatriz no deltóide.',q:'Conduta quanto à BCG:',opts:['Reaplicar imediatamente — ausência de cicatriz indica falha vacinal','Não reaplicar — ausência de cicatriz NÃO indica falta de proteção','Solicitar PPD antes de decidir','Aguardar até 6 meses e reaplicar se continuar sem cicatriz'],correct:3,exp:'A cicatriz pode demorar até <strong>6 meses</strong> para se formar. Se após 6 meses não houver cicatriz, <strong>revacinar UMA vez</strong> sem necessidade de PPD prévio. Não há indicação de reaplicar antes de 6 meses.'},
+{area:'Pediatria',case:'Lactente de 2 meses, nascido a termo, em AME. Mãe pergunta quando iniciar vitamina D.',q:'Recomendação de suplementação de vitamina D:',opts:['Iniciar com 400 UI/dia desde a primeira semana de vida até 12 meses','Não é necessário se estiver em AME','Iniciar aos 6 meses junto com o ferro','Apenas se houver raquitismo clínico'],correct:0,exp:'SBP recomenda <strong>400 UI/dia</strong> de vitamina D desde a <strong>primeira semana de vida até 12 meses</strong>, depois 600 UI/dia de 12-24 meses. Independe de AME — o leite materno contém pouca vitamina D.'},
+{area:'Pediatria',case:'Criança de 3 anos com chiado recorrente (5 episódios nos últimos 12 meses), pai asmático, eczema atópico. Entre as crises fica assintomática.',q:'Qual a hipótese diagnóstica mais provável?',opts:['Bronquiolite de repetição','Asma — critério clínico (sibilância recorrente + atopia + história familiar)','Fibrose cística','Corpo estranho em via aérea'],correct:1,exp:'≥3 episódios de sibilância em 6m ou ≥2 em 1 ano + história familiar de atopia + eczema = alto risco de <strong>asma</strong>. Na faixa pré-escolar o diagnóstico é clínico (não se faz espirometria <6 anos). Critérios de Castro-Rodriguez (API) positivo.'},
+{area:'Pediatria',case:'RN de 36h de vida. Teste da orelhinha (EOA): falha bilateral.',q:'Conduta:',opts:['Diagnóstico de surdez congênita — encaminhar para implante coclear','Repetir em 15-30 dias — falha na EOA não confirma surdez','Iniciar aparelho auditivo imediatamente','Considerar normal — RN de 36h tem líquido no ouvido'],correct:1,exp:'Falha nas EOA em RN <48h pode ser por <strong>vérnix ou líquido residual</strong> no conduto. Conduta: <strong>repetir em 15-30 dias</strong>. Se persistir falha, encaminhar para BERA (potencial evocado auditivo). EOA falha ≠ surdez confirmada.'},
+{area:'Pediatria',case:'Criança de 18 meses, trazida para consulta de puericultura. Mãe preocupada porque "ele não fala nenhuma palavra ainda e não aponta para as coisas".',q:'Avaliação do desenvolvimento:',opts:['Normal — meninos falam mais tarde','Alerta para atraso de linguagem — investigar audição e avaliar sinais de TEA','Esperar até 24 meses para preocupar-se','Encaminhar diretamente para fonoaudiólogo'],correct:1,exp:'Aos 18 meses espera-se pelo menos <strong>3-6 palavras</strong> e uso de <strong>gestos comunicativos</strong> (apontar, acenar). Ausência de palavras + ausência de gesto de apontar = <strong>alerta</strong>. Investigar: audiometria + avaliação de sinais de TEA (contato visual, atenção compartilhada). Encaminhar para avaliação especializada.'},
+{area:'Pediatria',case:'Criança de 4 anos com diarreia aquosa há 16 dias. Sem sangue, sem febre. Peso/idade -1,5 DP.',q:'Classificação AIDPI:',opts:['Diarreia aguda — Plano A','Diarreia persistente — dieta especial + retorno 5 dias','Diarreia persistente grave — referir','Disenteria — ATB'],correct:1,exp:'Diarreia ≥14 dias = <strong>diarreia persistente</strong>. Sem sinais de desidratação e sem sinais gerais de perigo = não grave. Conduta AIDPI: dieta especial (evitar lactose, aumentar aporte calórico), suplementar zinco e vitaminas, retorno em 5 dias.'},
+{area:'Pediatria',case:'Criança de 8 meses com febre há 5 dias (39-40°C), irritabilidade, exantema maculopapular difuso que surgiu após a febre ceder.',q:'Diagnóstico mais provável:',opts:['Sarampo','Rubéola','Exantema súbito (roséola — HHV-6)','Escarlatina'],correct:2,exp:'Febre alta por 3-5 dias em lactente, seguida de <strong>exantema após defervescência</strong> = quadro clássico de <strong>exantema súbito (roséola)</strong>, causado pelo HHV-6. O exantema é macular róseo, centrífugo, dura 24-72h. Autolimitado, tratamento sintomático.'},
+{area:'Pediatria',case:'Criança de 2 anos, febre 38°C, rinorreia, tosse, FR 32 irpm, sem tiragem, SpO2 98%, ativa, aceitando líquidos.',q:'Classificação AIDPI para tosse:',opts:['Pneumonia grave — referir','Pneumonia — ATB ambulatorial','Não é pneumonia — tratamento sintomático domiciliar','SRAG — notificar'],correct:2,exp:'FR 32 em criança de 1-5 anos = <strong>normal</strong> (taquipneia seria ≥40). Sem tiragem, sem sinais de perigo, boa SpO2 → classificação: <strong>"Não é pneumonia"</strong>. Conduta: tratamento domiciliar (hidratação, antitérmico, lavagem nasal), sinais de alarme, retorno em 5 dias ou se piora.'},
+
+// EPIDEMIOLOGIA extra
+{area:'Epidemiologia',case:'Programa de rastreamento de câncer de mama em mulheres 40-49 anos mostra alta taxa de falso-positivos com biópsias desnecessárias.',q:'Qual conceito epidemiológico melhor explica essa situação?',opts:['O programa é ineficaz e deve ser suspenso','Prevalência baixa nessa faixa etária reduz o VPP — mais falso-positivos','A mamografia tem baixa sensibilidade nessa faixa','Viés de length bias'],correct:1,exp:'Em <strong>populações de menor prevalência</strong> (como mulheres mais jovens), mesmo testes com boa especificidade geram proporcionalmente mais falso-positivos → <strong>VPP diminui</strong>. Por isso o MS recomenda rastreamento mamográfico a partir dos 50, não 40.'},
+{area:'Epidemiologia',case:'Médico quer avaliar se o programa de caminhada da UBS reduziu a PA dos participantes. Aferiu a PA antes e depois de 6 meses em 50 pacientes.',q:'Qual o tipo de estudo?',opts:['Ensaio clínico randomizado','Estudo quase-experimental (antes-depois, sem grupo controle)','Estudo de coorte','Estudo transversal'],correct:1,exp:'Mediu o desfecho antes e depois da intervenção no <strong>mesmo grupo, sem randomização e sem grupo controle</strong> = estudo <strong>quase-experimental</strong> (antes-depois). Limitação: não controla fatores confundidores (maturação, regressão à média). Inferior ao ECR.'},
+{area:'Epidemiologia',case:'Teste A: sensibilidade 95%, especificidade 80%. Teste B: sensibilidade 70%, especificidade 99%.',q:'Qual usar para rastreamento e qual para confirmação?',opts:['A para rastreamento, B para confirmação','B para rastreamento, A para confirmação','A para ambos — maior sensibilidade','B para ambos — maior especificidade'],correct:0,exp:'<strong>Rastreamento → alta sensibilidade</strong> (captar o máximo de doentes, aceitar falso-positivos) → Teste A. <strong>Confirmação → alta especificidade</strong> (minimizar falso-positivos) → Teste B. SnOUT / SpIN.'},
+{area:'Epidemiologia',case:'Revisão sistemática incluiu 15 ECRs sobre eficácia de um anti-hipertensivo. Resultado: RR 0,85 (IC 95%: 0,78-0,92).',q:'Interpretação correta:',opts:['Resultado inconclusivo — IC muito amplo','O medicamento AUMENTA o risco em 15%','O medicamento REDUZ o risco em 15%, resultado estatisticamente significativo','Não se pode interpretar sem o valor de p'],correct:2,exp:'RR 0,85 = <strong>redução de 15% no risco</strong> (fator protetor). IC 95% não cruza o 1,0 (0,78-0,92) → resultado <strong>estatisticamente significativo</strong>. Se o IC incluísse 1,0, não haveria significância.'},
+{area:'Epidemiologia',case:'Estudo de coorte encontrou RR = 1,0 (IC 95%: 0,6-1,7) para associação entre consumo de café e câncer de bexiga.',q:'Interpretação:',opts:['Café protege contra câncer de bexiga','Café é fator de risco para câncer de bexiga','Não há associação estatisticamente significativa entre café e câncer de bexiga','O estudo é inválido'],correct:2,exp:'RR = 1,0 = <strong>sem associação</strong>. IC 95% cruza 1,0 (0,6-1,7) → <strong>não significativo</strong>. Não se pode afirmar que café seja fator de risco nem protetor para câncer de bexiga neste estudo.'},
+
+// APS/MFC extra
+{area:'APS/MFC',case:'Paciente diabético falta às consultas há 8 meses. ACS relata que ele parou os medicamentos porque "se sentiu bem". Glicemia descontrolada.',q:'Qual estratégia priorizar?',opts:['Busca ativa pelo ACS + visita domiciliar para resgate do vínculo','Aguardar o paciente procurar a UBS espontaneamente','Encaminhar para endocrinologista pela gravidade','Ligar para o paciente e exigir que compareça'],correct:0,exp:'<strong>Longitudinalidade + busca ativa</strong>: o ACS realiza visita domiciliar, resgata vínculo, identifica barreiras à adesão. Entender o motivo da descontinuidade (illness). Não é papel do endocrinologista — é da equipe de APS que conhece o contexto.'},
+{area:'APS/MFC',case:'Dr. Carlos recebe resultado de exame de uma paciente: nódulo tireoidiano de 8mm, achado incidental em USG de carótidas. TSH normal. Paciente assintomática.',q:'Como abordar?',opts:['Encaminhar imediatamente para cirurgião para biópsia','Solicitar PAAF guiada por USG','Orientar que nódulos <10mm com TSH normal geralmente não requerem biópsia — acompanhar com USG','Pedir cintilografia tireoidiana'],correct:2,exp:'Nódulo <10mm, sem características suspeitas, TSH normal → <strong>acompanhamento com USG</strong>. Prevenção quaternária: evitar a cascata diagnóstica (biópsia → achado indeterminado → cirurgia → complicações). Nódulos tireoidianos são muito prevalentes (~50% da população adulta) e a maioria é benigna.'},
+{area:'APS/MFC',case:'Gestante de 28 semanas, acompanhamento pré-natal na UBS. Refere que fez USG particular que mostrou "circular de cordão". Está muito ansiosa.',q:'Conduta do MFC:',opts:['Encaminhar para alto risco — circular é indicação de cesárea','Tranquilizar: circular de cordão é achado frequente (~30% dos partos) e NÃO indica cesárea ou alto risco','Solicitar Doppler fetal urgente','Internar para monitorização fetal contínua'],correct:1,exp:'Circular de cordão é achado <strong>presente em ~30%</strong> dos partos normais e <strong>NÃO é indicação de cesárea</strong>. É um exemplo de achado incidental que gera ansiedade desnecessária. Prevenção quaternária: <strong>tranquilizar</strong>, explicar que é fisiológico, manter pré-natal de risco habitual.'},
+{area:'APS/MFC',case:'Equipe de ESF realizou territorialização e identificou que o bairro tem alta prevalência de dengue, esgoto a céu aberto e creche sem programa de saúde.',q:'Qual atributo derivado da APS está sendo exercido?',opts:['Acesso de primeiro contato','Integralidade','Orientação comunitária','Coordenação do cuidado'],correct:2,exp:'<strong>Orientação comunitária:</strong> conhecer o perfil epidemiológico e social do território, identificar determinantes sociais e recursos comunitários. Territorialização, diagnóstico comunitário e planejamento de ações coletivas.'},
+{area:'APS/MFC',case:'Paciente se irrita na consulta porque o médico anterior pediu 20 exames de sangue e o resultado foi "tudo normal". Diz que quer "saber o que tem de verdade".',q:'O que essa situação ilustra?',opts:['Necessidade de mais exames especializados','Falha da prevenção quaternária — excesso de exames sem indicação gerou frustração e não resolveu a queixa','O médico anterior agiu corretamente — descartou doenças','O paciente tem transtorno de ansiedade'],correct:1,exp:'Exames excessivos sem indicação clínica = falha de prevenção quaternária. Não explorou a <strong>dimensão illness</strong> (o que o paciente sente, pensa, espera). Resultado: frustração, custos desnecessários e persistência do sofrimento. O caminho correto era MCCP + SIFE.'},
+
+// CLÍNICA extra
+{area:'Clínica',case:'Homem de 58 anos, roncador, IMC 32, sonolência diurna excessiva, esposa refere que ele para de respirar à noite. Epworth 16.',q:'Qual a hipótese e o exame indicado?',opts:['Insônia crônica — TCC-I','SAOS (apneia obstrutiva do sono) — polissonografia','Narcolepsia — teste de latências múltiplas','Síndrome das pernas inquietas — ferritina'],correct:1,exp:'Ronco + obesidade + apneias presenciadas + sonolência diurna (Epworth >10) = quadro clássico de <strong>SAOS</strong>. Exame: <strong>polissonografia</strong> (índice de apneia-hipopneia). Tratamento: perda de peso + CPAP. Diferente de insônia — o paciente DORME, mas o sono não é reparador.'},
+{area:'Clínica',case:'Idosa de 78 anos com queixa de insônia. Toma clonazepam 2mg há 15 anos, prescrito por neurologista. Refere quedas frequentes. Filha pede para manter a receita.',q:'Melhor conduta:',opts:['Manter — paciente usa há 15 anos sem queixa','Suspender abruptamente — risco de quedas é grave','Planejar desmame gradual com redução de 25% a cada 2-4 semanas + medidas não farmacológicas','Trocar por diazepam em dose equivalente'],correct:2,exp:'BZD em idosa com quedas = risco grave (Beers). Mas após 15 anos de uso, suspensão abrupta pode causar <strong>abstinência (convulsões)</strong>. Conduta: <strong>desmame gradual</strong> (25% a cada 2-4 semanas), associando TCC-I/higiene do sono. Trocar por outro BZD não resolve.'},
+{area:'Clínica',case:'Adolescente de 16 anos com dificuldade de dormir. Vai para cama às 23h, não pega no sono antes das 2h. Nos fins de semana dorme até 12h e acorda bem.',q:'Qual o diagnóstico mais provável?',opts:['Insônia crônica','Síndrome do atraso de fase do sono','Depressão','Uso excessivo de cafeína'],correct:1,exp:'Adolescente com dificuldade para dormir cedo mas que dorme bem quando o horário é livre (fins de semana) = <strong>síndrome do atraso de fase</strong>. O relógio biológico está deslocado. Tratamento: cronoterapia, exposição à luz matinal, <strong>melatonina</strong> 1-3h antes do horário desejado de sono. Não é insônia clássica.'},
+
+// PEDIATRIA — mais AIDPI e clínica
+{area:'Pediatria',case:'Criança de 6 meses com febre de 39°C há 1 dia. Sem foco aparente, ativa, mama bem, sem sinais de perigo.',q:'Conduta segundo AIDPI:',opts:['Referir — febre alta em lactente é sempre grave','Classificar como doença febril — antitérmico + orientar sinais de alarme + retorno em 2 dias','Solicitar hemograma + hemocultura + urina','ATB empírico por via IM'],correct:1,exp:'Na AIDPI, febre sem foco em <strong>criança ativa, sem sinais de perigo</strong>, sem rigidez de nuca, sem petéquias = manejo ambulatorial. Antitérmico, orientar sinais de alarme, <strong>retorno em 2 dias</strong>. Se piora ou persistência, investigar (ITU é causa frequente de febre sem foco em lactentes).'},
+{area:'Pediatria',case:'Criança de 3 anos, pesando 12kg, com pneumonia pela AIDPI. Prescrito Amoxicilina 250mg/5ml.',q:'Qual a dose correta?',opts:['2,5ml de 12/12h por 7 dias','5ml de 12/12h por 7 dias','5ml de 8/8h por 7 dias','10ml de 12/12h por 5 dias'],correct:1,exp:'Amoxicilina 50mg/kg/dia ÷ 2 tomadas. 12kg × 50 = 600mg/dia ÷ 2 = 300mg/dose. Suspensão 250mg/5ml → <strong>300mg = 6ml</strong>... Na prática AIDPI simplifica para ~5ml de 12/12h (arredondamento para faixa de peso). Duração: <strong>7 dias</strong>.'},
+{area:'Pediatria',case:'Mãe traz criança de 4 anos com verminose (áscaris). Pergunta se pode dar ivermectina.',q:'Orientação sobre anti-helmínticos em pré-escolares:',opts:['Ivermectina é o tratamento de escolha para ascaridíase','Albendazol 400mg dose única é o tratamento padrão para ascaris em >2 anos','Mebendazol é contraindicado em crianças','Não tratar — resolverá espontaneamente'],correct:1,exp:'Tratamento de ascaridíase: <strong>Albendazol 400mg dose única</strong> (>2 anos) ou Mebendazol 500mg dose única. Ivermectina NÃO é tratamento de escolha para áscaris (é para estrongiloidíase e outras parasitoses). Na AIDPI, anti-helmíntico também é dado para crianças com anemia.'},
+{area:'Pediatria',case:'Lactente de 5 meses em AME. Mãe pergunta se pode começar a dar papinha porque "o leite não sustenta mais".',q:'Orientação sobre introdução alimentar:',opts:['Pode iniciar aos 5 meses se o bebê demonstra interesse','Manter AME até 6 meses — iniciar alimentação complementar apenas aos 6m','Pode iniciar se o bebê já senta sem apoio','AME pode ser mantido até 12 meses sem complementação'],correct:1,exp:'OMS/MS: <strong>AME até 6 meses completos</strong>. Introdução precoce (<4m) aumenta risco de alergias, infecções e obesidade. O leite materno SUSTENTA até 6 meses. Iniciar apenas aos 6m com frutas amassadas e papa salgada, mantendo AM.'},
+
+// ══════ HAS / CRISES HIPERTENSIVAS ══════
+,{area:'Clínica',case:'Jorge, 46 anos, vigilante, assintomático. PA 155/95 no exame admissional. Na UBS: PA 155/95, FC 110, peso 90kg, 1,76m, CA 98cm. Acantose nigricans. Glicemia jejum 109, CT 280, LDL 198, HDL 32, TG 180, creatinina 1,46.',q:'Qual o diagnóstico e a conduta inicial?',opts:['Hipertensão do jaleco branco — repetir em 3 meses','HAS estágio 1 + síndrome metabólica + alto risco CV — iniciar tratamento farmacológico + MEV','Pré-hipertensão — apenas MEV por 6 meses','HAS secundária — investigar feocromocitoma'],correct:1,exp:'PA ≥140/90 em 2 ocasiões = HAS confirmada (estágio 1). Acantose nigricans + glicemia jejum 109 + dislipidemia mista + CA 98cm + obesidade = <strong>síndrome metabólica</strong>. Risco CV alto (DM borderline + dislipidemia + HF de DCV precoce). Conduta: MEV + <strong>iniciar 2 drogas</strong> (IECA/BRA + diurético ou BCC) + estatina.'}
+,{area:'Clínica',case:'Marina, 66 anos, negra, HAS+DM há 20 anos. Usa metildopa 500mg 8/8h desde gestação. PA 180/110. HVE no eco. Lesão ulcerada em pé com secreção purulenta. HbA1c 8,5%. LDL 198.',q:'Quais problemas você identifica e qual a conduta prioritária?',opts:['Ajustar metildopa para dose máxima','Trocar esquema anti-hipertensivo (metildopa não é 1ª linha fora da gestação) + tratar úlcera + otimizar DM + estatina','Iniciar insulina NPH e manter medicações atuais','Encaminhar para cardiologista e aguardar'],correct:1,exp:'Metildopa NÃO é primeira linha fora da gestação. Marina tem <strong>HAS não controlada + LOA (HVE)</strong> + DM descompensado + dislipidemia + úlcera infectada (pé diabético). Prioridades: trocar para IECA/BRA + BCC/diurético, tratar úlcera (ATB + curativo), otimizar DM (ajustar metformina, considerar insulina), iniciar <strong>estatina de alta potência</strong>.'}
+,{area:'Clínica',case:'Maurício, 26 anos, PA 180/102 na UBS. Palpitações, tremores, sudorese excessiva. FC 126. TSH <0,01.',q:'Qual a principal hipótese de HAS secundária?',opts:['Feocromocitoma','Hipertireoidismo','Estenose de artéria renal','Hiperaldosteronismo primário'],correct:1,exp:'Jovem + HAS + taquicardia + tremor + sudorese + <strong>TSH suprimido (<0,01)</strong> = <strong>hipertireoidismo</strong>. O excesso de hormônios tireoidianos causa HAS sistólica, taquicardia e hipermetabolismo. Confirmar com T4 livre. Tratar a causa (metimazol/PTU) resolve a HAS.'}
+,{area:'Clínica',case:'Maurício (outro caso), 26 anos, PA 180/102 mantida com MRPA. Após 30 dias de losartana: creatinina subiu de 0,9 para 1,45, EAS com proteinúria ++ e hematúria. Sopro abdominal 2+/4+.',q:'O que a elevação da creatinina após IECA/BRA + sopro abdominal sugere?',opts:['Nefropatia diabética','Estenose de artéria renal bilateral — suspender losartana e investigar','Efeito colateral esperado — manter losartana','Glomerulonefrite — encaminhar para nefrologista'],correct:1,exp:'Creatinina subindo <strong>>30% após IECA/BRA</strong> + sopro abdominal = alta suspeita de <strong>estenose de artéria renal</strong> (em jovem: displasia fibromuscular). O IECA/BRA reduz a filtração glomerular do rim isquêmico. Conduta: suspender losartana, investigar com Doppler de artérias renais, encaminhar.'}
+,{area:'Clínica',case:'Ana, 85 anos, HAS de longa data, AVCi prévio sem sequelas. PA 186/74. MRPA média 158/72. Assintomática. Usa indapamida + losartana 50mg.',q:'Qual a meta pressórica e conduta?',opts:['Meta <130/80 — aumentar losartana para 100mg','Meta <140/90 — adicionar anlodipino','Meta PAS <150 para idosa ≥80 anos — ajustar com cautela para evitar hipotensão','Meta <120/80 — intensificar tratamento'],correct:2,exp:'Idosa ≥80 anos com AVCi prévio: meta <strong>PAS <150</strong> (mais conservadora). MRPA 158/72 → PA sistólica levemente acima da meta, mas PAD 72 já é baixa. Intensificar com cautela: pequeno ajuste de dose. <strong>Evitar PAS <130</strong> pelo risco de hipotensão, quedas e hipoperfusão cerebral.'}
+,{area:'Clínica',case:'D. Lourdes, 56 anos, chega à UBS com cefaleia, PA 186/118. Sem diagnóstico prévio de HAS. Usa captopril da vizinha quando sente algo. SpO2 96%, FC 98, FR 22.',q:'Como classificar e conduzir este caso?',opts:['Emergência hipertensiva — SAMU imediato','Pseudocrise hipertensiva — repouso, avaliar, orientar retorno com MRPA','Urgência hipertensiva — captopril 25mg VO, observar, ajustar','Crise hipertensiva — nifedipino sublingual'],correct:2,exp:'PA ≥180/120 + sintomas (cefaleia, dispneia leve) SEM evidência de LOA aguda = <strong>urgência hipertensiva</strong>. Conduta: captopril 25mg VO, observar 1-2h, orientar consulta para diagnóstico de HAS, iniciar tratamento ambulatorial. NÃO usar nifedipino sublingual (queda abrupta). Se houvesse LOA = emergência.'}
+
+,{area:'Saúde da Mulher',case:'Mulher de 28 anos, epiléptica em uso de ácido valproico 500mg 2x/dia, deseja engravidar. Consulta pré-concepcional.',q:'Conduta quanto ao anticonvulsivante?',opts:['Suspender ácido valproico imediatamente','Manter ácido valproico — não há risco na gestação','Trocar para lamotrigina ou levetiracetam ANTES de engravidar + ácido fólico 5mg','Trocar para carbamazepina — mais segura'],correct:2,exp:'Ácido valproico tem o <strong>maior risco teratogênico</strong> (10,93%). Trocar para lamotrigina ou levetiracetam (menor risco) <strong>antes da concepção</strong>, com titulação adequada. Iniciar ácido fólico 5mg/dia 60-90 dias antes. NÃO suspender anticonvulsivante (risco de crises).'}
+,{area:'Saúde da Mulher',case:'Gestante de 12 semanas, depressão moderada, em uso de paroxetina 20mg há 2 anos. Psiquiatra anterior prescreveu.',q:'Conduta na gestação?',opts:['Manter paroxetina — não trocar na gestação','Trocar para sertralina — menor risco fetal','Suspender antidepressivo — riscos fetais superam benefícios','Trocar para amitriptilina'],correct:1,exp:'<strong>Paroxetina</strong> tem estudos sugerindo risco de defeitos cardíacos septais. A <strong>sertralina é 1ª escolha</strong> na gestação e lactação. Trocar com titulação cruzada. NÃO suspender antidepressivo sem avaliar risco de recaída da depressão (que também tem impacto fetal).'}
+,{area:'Saúde da Mulher',case:'Marina, 66 anos (Caso 2 do ED3), usa metildopa 500mg 8/8h desde a última gestação há 22 anos. Nunca trocou.',q:'O que há de errado com esta prescrição?',opts:['Nada — metildopa é anti-hipertensivo adequado para uso crônico','Metildopa NÃO é primeira linha fora da gestação — trocar para IECA/BRA + BCC ou diurético','A dose está baixa — aumentar','Deveria estar usando losartana + metildopa'],correct:1,exp:'<strong>Metildopa é 1ª linha APENAS na gestação.</strong> Fora da gestação, as 4 classes de 1ª linha são IECA, BRA, BCC e diuréticos tiazídicos. Marina usa metildopa há 22 anos sem revisão — trocar para esquema adequado ao seu perfil (negra, idosa: BCC + diurético ou BCC + IECA).'}
+,{area:'Saúde da Mulher',case:'Mulher de 32 anos, G2P1, consulta pré-concepcional. HAS em uso de enalapril 10mg. Deseja nova gestação.',q:'Conduta quanto ao enalapril?',opts:['Manter — IECA é seguro na gestação','Trocar para metildopa ANTES de engravidar','Trocar apenas quando confirmar gestação','Suspender anti-hipertensivo durante a gestação'],correct:1,exp:'IECA (enalapril) é <strong>teratogênico</strong> — contraindicado na gestação. Trocar para <strong>metildopa ANTES</strong> de engravidar (no pré-concepcional). Se descobrir gestação em uso de IECA, trocar imediatamente. Nifedipino também é alternativa.'}
+,{area:'Saúde da Mulher',case:'Adolescente de 16 anos, relata relação sexual desprotegida há 3 dias. Está apavorada com possibilidade de gravidez.',q:'Conduta na APS?',opts:['Solicitar beta-hCG e aguardar resultado','Oferecer contracepção de emergência (levonorgestrel) — eficaz até 72-120h','Orientar que é tarde demais para qualquer intervenção','Encaminhar para ginecologista'],correct:1,exp:'Contracepção de emergência com <strong>levonorgestrel 1,5mg dose única</strong> é eficaz até 72h (ideal) e com menor eficácia até 120h (5 dias). Não precisa de receita, não é abortivo. Deve ser oferecida sem julgamento na APS. Aproveitar para orientar planejamento reprodutivo.'}
+];
+
+
+// ═══════════════════════════════════════
+// SCHEDULE DATA
+// ═══════════════════════════════════════
+const SCHEDULE = [
+{day:'Dia 1',title:'Epidemiologia e Rastreamentos',topics:['epidemio'],desc:'Conceitos epidemiológicos, medidas de frequência, validade de testes, critérios de rastreamento, vieses, níveis de prevenção (Leavell & Clark + Jamoulle).'},
+{day:'Dia 2',title:'Tipos de Estudos Epidemiológicos',topics:['estudos_epi'],desc:'Relato/série de casos, transversal, caso-controle, coorte, ECR. Hierarquia da evidência, medidas de associação (RR, OR, NNT).'},
+{day:'Dia 3',title:'Princípios da APS e MFC',topics:['aps_mfc'],desc:'Starfield (atributos essenciais e derivados), princípios WONCA, MCCP, prevenção quaternária.'},
+{day:'Dia 4',title:'Consulta em 7 Passos + MCCP',topics:['consulta7'],desc:'Os 7 passos, SIFE/FIFE, decisão compartilhada, contaminação da consulta, SOAP.'},
+{day:'Dia 5',title:'Promoção da Saúde e Prevenção',topics:['promocao'],desc:'Carta de Ottawa, fatores de risco, prevenção primária a quaternária, autocuidado apoiado.'},
+{day:'Dia 6',title:'Nutrição e Crescimento Infantil',topics:['nutricao'],desc:'Curvas de crescimento OMS, classificação da desnutrição, suplementação de ferro e vitamina A.'},
+{day:'Dia 7',title:'Doenças Respiratórias na APS',topics:['respiratorio'],desc:'BVA, OMA, sibilância/asma, faringite, Sd. Mão-Pé-Boca, SRAG. Foco nos casos clínicos.'},
+{day:'Dia 8',title:'AIDPI — Criança 2m a 5 anos',topics:['aidpi'],desc:'Sinais de perigo, classificação por cores, manejo de tosse/diarreia/febre/ouvido/garganta.'},
+{day:'Dia 9',title:'Consulta do RN e Amamentação',topics:['puericultura'],desc:'Exame físico do RN, triagens neonatais, técnica de amamentação, orientações preventivas.'},
+{day:'Dia 10',title:'Sazonalidade Respiratória (SES-DF)',topics:['sazonalidade'],desc:'Plano do DF, definições SG/SRAG, estágios operacionais, papel da APS, imunização VSR.'},
+{day:'Dia 11',title:'HAS, Crises Hipertensivas e Dislipidemias',topics:['has'],desc:'Diagnóstico, classificação, tratamento farmacológico e não farmacológico, HAS secundária, pseudocrise vs. urgência vs. emergência, dislipidemias.'},
+{day:'Dia 12',title:'Pré-concepcional e Planejamento Reprodutivo',topics:['preconcepcional'],desc:'Consulta pré-concepcional, ácido fólico, medicamentos na gestação, planejamento reprodutivo, gestação indesejada, aborto legal.'},
+{day:'Dia 14',title:'Revisão + Simulado Final',topics:[],desc:'Revisar flashcards marcados como difíceis. Fazer todas as questões no modo simulado. Revisar erros.'}
+];
+
+// ═══════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════
+let state = JSON.parse(localStorage.getItem('mfc_r1_state')||'{}');
+if(!state.studied) state.studied={};
+if(!state.quizAnswers) state.quizAnswers={};
+if(!state.fcIndex) state.fcIndex=0;
+if(!state.currentFilter) state.currentFilter='Todos';
+function saveState(){localStorage.setItem('mfc_r1_state',JSON.stringify(state))}
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+const NAV_MAP={cronograma:0,conteudo:1,flashcards:2,questoes:3,progresso:4};
+function showSection(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.querySelectorAll('.nav-btn').forEach((b,i)=>{b.classList.toggle('active',i===NAV_MAP[id])});
+if(id==='conteudo') renderTopics();
+if(id==='flashcards') renderFlashcard();
+if(id==='questoes') renderQuiz();
+if(id==='progresso') renderProgress();
+if(id==='cronograma') renderSchedule();
+}
+
+// ═══════════════════════════════════════
+// SCHEDULE
+// ═══════════════════════════════════════
+function renderSchedule(){
+const el=document.getElementById('scheduleList');
+const studied=Object.keys(state.studied).length;
+const total=TOPICS.length;
+document.getElementById('globalProgress').style.width=`${(studied/total*100)}%`;
+document.getElementById('globalProgressText').textContent=`${studied} de ${total} temas estudados`;
+document.getElementById('globalProgressPct').textContent=`${Math.round(studied/total*100)}%`;
+
+el.innerHTML=SCHEDULE.map((s,i)=>{
+const done=s.topics.every(t=>state.studied[t]);
+const isCurrent=!done&&(i===0||SCHEDULE[i-1].topics.every(t=>state.studied[t]));
+return`<div class="schedule-day">
+<div class="schedule-marker ${done?'done':isCurrent?'current':''}">${done?'✓':i+1}</div>
+${i<SCHEDULE.length-1?'<div class="schedule-line"></div>':''}
+<div class="schedule-content">
+<h4>${s.day}: ${s.title}</h4>
+<p>${s.desc}</p>
+${s.topics.length?`<div style="margin-top:8px"><button class="btn btn-sm ${done?'btn-secondary':'btn-primary'}" onclick="goToTopic('${s.topics[0]}')">${done?'📖 Revisar':'▶ Estudar'}</button></div>`:'<div style="margin-top:8px"><button class="btn btn-sm btn-primary" onclick="showSection(\'questoes\')">▶ Iniciar Simulado</button></div>'}
+</div>
+</div>`}).join('');
+}
+
+function goToTopic(topicId){
+showSection('conteudo');
+setTimeout(()=>openReader(topicId),100);
+}
+
+// ═══════════════════════════════════════
+// CONTENT
+// ═══════════════════════════════════════
+function getAreas(){return['Todos',...new Set(TOPICS.map(t=>t.area))]}
+
+function renderTopics(){
+const areas=getAreas();
+document.getElementById('contentFilters').innerHTML=areas.map(a=>
+`<button class="filter-tab ${state.currentFilter===a?'active':''}" onclick="filterTopics('${a}')">${a}</button>`
+).join('');
+const filtered=state.currentFilter==='Todos'?TOPICS:TOPICS.filter(t=>t.area===state.currentFilter);
+document.getElementById('topicCards').innerHTML=filtered.map(t=>`
+<div class="card" onclick="openReader('${t.id}')">
+<div class="card-title">${t.icon} ${t.title} ${state.studied[t.id]?'<span class="badge badge-green">Lido</span>':''}</div>
+<div class="card-body">${t.area}</div>
+</div>`).join('');
+}
+
+function filterTopics(a){state.currentFilter=a;saveState();renderTopics()}
+
+function openReader(id){
+const topic=TOPICS.find(t=>t.id===id);
+if(!topic) return;
+document.getElementById('topicListView').style.display='none';
+document.getElementById('readerView').classList.add('active');
+document.getElementById('readerContent').innerHTML=topic.content+
+`<div style="margin-top:30px;padding-top:16px;border-top:1px solid rgba(255,255,255,.06)">
+<button class="btn btn-primary btn-block" onclick="markStudied('${id}')">
+${state.studied[id]?'✓ Já estudado — Revisar novamente':'✓ Marcar como estudado'}
+</button></div>`;
+window.scrollTo(0,0);
+}
+
+function closeReader(){
+document.getElementById('topicListView').style.display='block';
+document.getElementById('readerView').classList.remove('active');
+renderTopics();
+}
+
+function markStudied(id){
+state.studied[id]=true;saveState();
+openReader(id);
+renderSchedule();
+}
+
+// ═══════════════════════════════════════
+// FLASHCARDS
+// ═══════════════════════════════════════
+let fcFiltered=[...FLASHCARDS];
+let fcIdx=0;
+
+function renderFcFilters(){
+const cats=['Todos',...new Set(FLASHCARDS.map(f=>f.cat))];
+document.getElementById('fcFilters').innerHTML=cats.map(c=>
+`<button class="filter-tab ${(state.fcFilter||'Todos')===c?'active':''}" onclick="filterFc('${c}')">${c}</button>`
+).join('');
+}
+
+function filterFc(c){
+state.fcFilter=c;saveState();
+fcFiltered=c==='Todos'?[...FLASHCARDS]:FLASHCARDS.filter(f=>f.cat===c);
+fcIdx=0;renderFlashcard();
+}
+
+function renderFlashcard(){
+renderFcFilters();
+if(fcFiltered.length===0){document.getElementById('fcCounter').textContent='Nenhum card nesta categoria';return}
+if(fcIdx>=fcFiltered.length) fcIdx=0;
+if(fcIdx<0) fcIdx=fcFiltered.length-1;
+const fc=fcFiltered[fcIdx];
+document.getElementById('flashcard').classList.remove('flipped');
+document.getElementById('fcCategory').textContent=fc.cat;
+document.getElementById('fcCategoryBack').textContent=fc.cat;
+document.getElementById('fcQuestion').textContent=fc.q;
+document.getElementById('fcAnswer').innerHTML=fc.a;
+document.getElementById('fcCounter').textContent=`${fcIdx+1} / ${fcFiltered.length}`;
+}
+
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped')}
+function nextCard(){fcIdx++;renderFlashcard()}
+function prevCard(){fcIdx--;renderFlashcard()}
+function shuffleCards(){fcFiltered.sort(()=>Math.random()-.5);fcIdx=0;renderFlashcard()}
+
+// ═══════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════
+let quizIdx=0;
+let quizFiltered=[...QUESTIONS];
+let quizAnswered=false;
+
+function renderQuizFilters(){
+const areas=['Todos',...new Set(QUESTIONS.map(q=>q.area))];
+document.getElementById('quizFilters').innerHTML=areas.map(a=>
+`<button class="filter-tab ${(state.quizFilter||'Todos')===a?'active':''}" onclick="filterQuiz('${a}')">${a}</button>`
+).join('');
+}
+
+function filterQuiz(a){
+state.quizFilter=a;saveState();
+quizFiltered=a==='Todos'?[...QUESTIONS]:QUESTIONS.filter(q=>q.area===a);
+quizIdx=0;quizAnswered=false;renderQuiz();
+}
+
+function renderQuiz(){
+renderQuizFilters();
+if(quizFiltered.length===0){document.getElementById('quizArea').innerHTML='<p style="color:var(--fg3)">Nenhuma questão nesta categoria.</p>';return}
+if(quizIdx>=quizFiltered.length) quizIdx=0;
+const q=quizFiltered[quizIdx];
+const answered=state.quizAnswers[`${quizIdx}_${q.q.substring(0,20)}`];
+quizAnswered=answered!==undefined;
+
+let html=`<div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+<span class="badge badge-blue">Questão ${quizIdx+1} / ${quizFiltered.length}</span>
+<span class="badge badge-${q.area==='Pediatria'?'green':q.area==='Epidemiologia'?'yellow':'blue'}">${q.area}</span>
+</div>`;
+
+if(q.case) html+=`<div class="quiz-case">${q.case}</div>`;
+html+=`<div class="card"><div class="card-title" style="font-size:1rem;margin-bottom:12px">${q.q}</div>`;
+q.opts.forEach((o,i)=>{
+let cls='quiz-option';
+if(quizAnswered){
+if(i===q.correct) cls+=' correct';
+else if(answered===i) cls+=' wrong';
+}
+html+=`<button class="${cls}" ${quizAnswered?'disabled':''} onclick="answerQuiz(${quizIdx},${i})">${String.fromCharCode(65+i)}) ${o}</button>`;
+});
+html+=`<div class="quiz-explanation" id="quizExp" ${quizAnswered?'style="display:block"':''}>${q.exp}</div>`;
+html+=`</div>`;
+html+=`<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn btn-secondary" style="flex:1" onclick="quizIdx--;quizAnswered=false;renderQuiz()">← Anterior</button>
+<button class="btn btn-primary" style="flex:1" onclick="quizIdx++;quizAnswered=false;renderQuiz()">Próxima →</button>
+</div>`;
+
+// Score summary
+const totalAnswered=Object.keys(state.quizAnswers).length;
+const totalCorrect=Object.values(state.quizAnswers).filter((v,i)=>{
+const key=Object.keys(state.quizAnswers)[i];
+return v===true;
+}).length;
+
+document.getElementById('quizArea').innerHTML=html;
+}
+
+function answerQuiz(idx,chosen){
+const q=quizFiltered[idx];
+const key=`${idx}_${q.q.substring(0,20)}`;
+state.quizAnswers[key]=chosen;
+if(chosen===q.correct) state.quizAnswers[key+'_correct']=true;
+saveState();
+quizAnswered=true;
+renderQuiz();
+}
+
+// ═══════════════════════════════════════
+// PROGRESS
+// ═══════════════════════════════════════
+function renderProgress(){
+const studied=Object.keys(state.studied).length;
+const total=TOPICS.length;
+const answered=Object.keys(state.quizAnswers).filter(k=>!k.endsWith('_correct')).length;
+const correct=Object.keys(state.quizAnswers).filter(k=>k.endsWith('_correct')).length;
+
+let html=`<div class="quiz-score">
+<div class="quiz-score-item"><div class="num" style="color:var(--acc)">${studied}</div><div class="label">Temas Estudados</div></div>
+<div class="quiz-score-item"><div class="num" style="color:var(--info)">${total}</div><div class="label">Total de Temas</div></div>
+<div class="quiz-score-item"><div class="num" style="color:var(--warn)">${correct}</div><div class="label">Questões Certas</div></div>
+<div class="quiz-score-item"><div class="num" style="color:var(--err)">${answered-correct}</div><div class="label">Questões Erradas</div></div>
+</div>`;
+
+html+=`<div class="card"><div class="card-title">📖 Temas por status</div><div class="card-body">`;
+TOPICS.forEach(t=>{
+html+=`<div class="check-item ${state.studied[t.id]?'checked':''}" onclick="toggleStudied('${t.id}')">
+<div class="check-box">${state.studied[t.id]?'✓':''}</div>
+${t.icon} ${t.title}
+</div>`;
+});
+html+=`</div></div>`;
+
+html+=`<div class="card"><div class="card-title">📊 Desempenho nas Questões</div><div class="card-body">`;
+if(answered>0){
+const pct=Math.round(correct/answered*100);
+html+=`<div class="progress-bar" style="height:8px;margin:12px 0"><div class="progress-fill" style="width:${pct}%;${pct<60?'background:linear-gradient(90deg,var(--err),var(--warn))':''}"></div></div>`;
+html+=`<p style="text-align:center;font-size:.9rem">${pct}% de acerto (${correct}/${answered})</p>`;
+}else{
+html+=`<p style="color:var(--fg3)">Nenhuma questão respondida ainda.</p>`;
+}
+html+=`</div></div>`;
+
+document.getElementById('progressStats').innerHTML=html;
+}
+
+function toggleStudied(id){
+state.studied[id]=!state.studied[id];
+if(!state.studied[id]) delete state.studied[id];
+saveState();renderProgress();
+}
+
+function resetProgress(){
+if(confirm('Tem certeza? Isso apagará todo seu progresso de estudo, flashcards e questões.')){
+state={studied:{},quizAnswers:{},fcIndex:0,currentFilter:'Todos'};
+saveState();renderProgress();renderSchedule();
+}
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+renderSchedule();
+
+// Touch swipe for flashcards
+let touchStartX=0;
+document.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX},{passive:true});
+document.addEventListener('touchend',e=>{
+const diff=e.changedTouches[0].screenX-touchStartX;
+const fc=document.getElementById('flashcards');
+if(fc.classList.contains('active')&&Math.abs(diff)>60){
+if(diff<0) nextCard(); else prevCard();
+}
+},{passive:true});
+
+// PWA: se hospedado em servidor, criar sw.js separado
+</script>
+</body>
+</html>
