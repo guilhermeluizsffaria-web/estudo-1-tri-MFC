@@ -72,7 +72,9 @@
         "q_Esseachadoradiolgicomudao": 2,
         "q_Esseachadoradiolgicomudao_ok": true,
         "q_Sobreoaleitamentomaternona": 1,
-        "q_Sobreoaleitamentomaternona_ok": true
+        "q_Sobreoaleitamentomaternona_ok": true,
+        "q_Qualacomplicaoecondutai": 1,
+        "q_Qualacomplicaoecondutai_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
