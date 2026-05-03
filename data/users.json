@@ -6,7 +6,8 @@
         "epidemio": true,
         "aps_mfc": true,
         "consulta7": true,
-        "sono": true
+        "sono": true,
+        "promocao": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
