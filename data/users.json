@@ -66,7 +66,9 @@
         "q_ClassificaoAIDPIeconduta": 1,
         "q_ClassificaoAIDPIeconduta_ok": false,
         "q_Diagnsticoeconduta": 0,
-        "q_Diagnsticoeconduta_ok": false
+        "q_Diagnsticoeconduta_ok": false,
+        "q_Qualodiagnsticomaisprovv": 0,
+        "q_Qualodiagnsticomaisprovv_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
