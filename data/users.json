@@ -12,7 +12,8 @@
         "respiratorio": true,
         "aidpi": true,
         "puericultura": true,
-        "sazonalidade": true
+        "sazonalidade": true,
+        "estudos_epi": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
