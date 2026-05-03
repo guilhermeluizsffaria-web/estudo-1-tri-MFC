@@ -9,7 +9,8 @@
         "sono": true,
         "promocao": true,
         "nutricao": true,
-        "respiratorio": true
+        "respiratorio": true,
+        "aidpi": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
