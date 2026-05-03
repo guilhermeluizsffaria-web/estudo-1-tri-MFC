@@ -70,7 +70,9 @@
         "q_Qualodiagnsticomaisprovv": 0,
         "q_Qualodiagnsticomaisprovv_ok": false,
         "q_Esseachadoradiolgicomudao": 2,
-        "q_Esseachadoradiolgicomudao_ok": true
+        "q_Esseachadoradiolgicomudao_ok": true,
+        "q_Sobreoaleitamentomaternona": 1,
+        "q_Sobreoaleitamentomaternona_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
