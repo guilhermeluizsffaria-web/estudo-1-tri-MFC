@@ -74,7 +74,9 @@
         "q_Sobreoaleitamentomaternona": 1,
         "q_Sobreoaleitamentomaternona_ok": true,
         "q_Qualacomplicaoecondutai": 1,
-        "q_Qualacomplicaoecondutai_ok": true
+        "q_Qualacomplicaoecondutai_ok": true,
+        "q_Classificaoeconduta": 2,
+        "q_Classificaoeconduta_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
