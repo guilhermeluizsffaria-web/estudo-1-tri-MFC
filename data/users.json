@@ -16,8 +16,8 @@
       "preconcepcional": true
     },
     "quizAnswers": {
-      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m": 1,
-      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m_correct": true
+      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m": 1,
+      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m_correct": true
     },
     "fcIndex": 0,
     "currentFilter": "Todos"
@@ -88,6 +88,15 @@
         "q_Interpretaoeconduta": 2,
         "q_Interpretaoeconduta_ok": false
       },
+      "fcIndex": 0,
+      "currentFilter": "Todos"
+    }
+  },
+  "gabrielalvesdacruz": {
+    "pw": "912cc8825ce37772fc9e5dd4b9da7ea278ffc9ab4aba21dde203b92abde4495e",
+    "state": {
+      "studied": {},
+      "quizAnswers": {},
       "fcIndex": 0,
       "currentFilter": "Todos"
     }
