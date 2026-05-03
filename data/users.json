@@ -62,7 +62,10 @@
     "pw": "74560b926d6f6b292762783011e796b25e366495c84d54427ca2ec6ddc7c4eca",
     "state": {
       "studied": {},
-      "quizAnswers": {},
+      "quizAnswers": {
+        "q_ClassificaoAIDPIeconduta": 1,
+        "q_ClassificaoAIDPIeconduta_ok": false
+      },
       "fcIndex": 0,
       "currentFilter": "Todos"
     }
