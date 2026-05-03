@@ -16,8 +16,8 @@
       "preconcepcional": true
     },
     "quizAnswers": {
-      "0_Qual o diagnÃÂÃÂÃÂÃÂ³stico m": 1,
-      "0_Qual o diagnÃÂÃÂÃÂÃÂ³stico m_correct": true
+      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m": 1,
+      "0_Qual o diagnÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ³stico m_correct": true
     },
     "fcIndex": 0,
     "currentFilter": "Todos"
@@ -68,7 +68,9 @@
         "q_Diagnsticoeconduta": 0,
         "q_Diagnsticoeconduta_ok": false,
         "q_Qualodiagnsticomaisprovv": 0,
-        "q_Qualodiagnsticomaisprovv_ok": false
+        "q_Qualodiagnsticomaisprovv_ok": false,
+        "q_Esseachadoradiolgicomudao": 2,
+        "q_Esseachadoradiolgicomudao_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
