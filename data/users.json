@@ -13,7 +13,8 @@
         "aidpi": true,
         "puericultura": true,
         "sazonalidade": true,
-        "estudos_epi": true
+        "estudos_epi": true,
+        "has": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
