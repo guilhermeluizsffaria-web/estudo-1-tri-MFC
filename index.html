@@ -1725,7 +1725,7 @@ function shuffleCards(){fcFiltered.sort(()=>Math.random()-.5);fcIdx=0;renderFlas
 // ═══════════════════════════════════════
 let quizIdx=0;
 let quizFiltered=[...QUESTIONS];
-let quizAnswered=false;
+
 
 function renderQuizFilters(){
 const areas=['Todos',...new Set(QUESTIONS.map(q=>q.area))];
@@ -1737,57 +1737,57 @@ document.getElementById('quizFilters').innerHTML=areas.map(a=>
 function filterQuiz(a){
 state.quizFilter=a;saveState();
 quizFiltered=a==='Todos'?[...QUESTIONS]:QUESTIONS.filter(q=>q.area===a);
-quizIdx=0;quizAnswered=false;renderQuiz();
+quizIdx=0;renderQuiz();
 }
 
 function renderQuiz(){
 renderQuizFilters();
-if(quizFiltered.length===0){document.getElementById('quizArea').innerHTML='<p style="color:var(--fg3)">Nenhuma questão nesta categoria.</p>';return}
+if(quizFiltered.length===0){document.getElementById('quizArea').innerHTML='<p style="color:var(--fg3)">Nenhuma questão nesta categoria.</p>';return;}
 if(quizIdx>=quizFiltered.length) quizIdx=0;
+if(quizIdx<0) quizIdx=quizFiltered.length-1;
 const q=quizFiltered[quizIdx];
-const answered=state.quizAnswers[`${quizIdx}_${q.q.substring(0,20)}`];
-quizAnswered=answered!==undefined;
+const qKey=`q_${q.q.substring(0,30).replace(/[^a-zA-Z0-9]/g,'')}`;
+const savedAnswer=state.quizAnswers[qKey];
+const isAnswered=savedAnswer!==undefined&&savedAnswer!==null;
 
-let html=`<div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
+let h=`<div style="margin-bottom:12px;display:flex;justify-content:space-between;align-items:center">
 <span class="badge badge-blue">Questão ${quizIdx+1} / ${quizFiltered.length}</span>
 <span class="badge badge-${q.area==='Pediatria'?'green':q.area==='Epidemiologia'?'yellow':'blue'}">${q.area}</span>
 </div>`;
-
-if(q.case) html+=`<div class="quiz-case">${q.case}</div>`;
-html+=`<div class="card"><div class="card-title" style="font-size:1rem;margin-bottom:12px">${q.q}</div>`;
+if(q.case) h+=`<div class="quiz-case">${q.case}</div>`;
+h+=`<div class="card"><div class="card-title" style="font-size:1rem;margin-bottom:12px">${q.q}</div>`;
 q.opts.forEach((o,i)=>{
 let cls='quiz-option';
-if(quizAnswered){
+if(isAnswered){
 if(i===q.correct) cls+=' correct';
-else if(answered===i) cls+=' wrong';
+else if(savedAnswer===i) cls+=' wrong';
 }
-html+=`<button class="${cls}" ${quizAnswered?'disabled':''} onclick="answerQuiz(${quizIdx},${i})">${String.fromCharCode(65+i)}) ${o}</button>`;
+h+=`<button class="${cls}" ${isAnswered?'disabled':''} onclick="answerQuiz(${quizIdx},${i})">${String.fromCharCode(65+i)}) ${o}</button>`;
 });
-html+=`<div class="quiz-explanation" id="quizExp" ${quizAnswered?'style="display:block"':''}>${q.exp}</div>`;
-html+=`</div>`;
-html+=`<div style="display:flex;gap:8px;margin-top:12px">
-<button class="btn btn-secondary" style="flex:1" onclick="quizIdx--;quizAnswered=false;renderQuiz()">← Anterior</button>
-<button class="btn btn-primary" style="flex:1" onclick="quizIdx++;quizAnswered=false;renderQuiz()">Próxima →</button>
+h+=`<div class="quiz-explanation" ${isAnswered?'style="display:block"':'style="display:none"'}>${q.exp}</div>`;
+h+=`</div>`;
+h+=`<div style="display:flex;gap:8px;margin-top:12px">
+<button class="btn btn-secondary" style="flex:1" onclick="quizIdx--;renderQuiz()">← Anterior</button>
+<button class="btn btn-primary" style="flex:1" onclick="quizIdx++;renderQuiz()">Próxima →</button>
 </div>`;
-
-// Score summary
-const totalAnswered=Object.keys(state.quizAnswers).length;
-const totalCorrect=Object.values(state.quizAnswers).filter((v,i)=>{
-const key=Object.keys(state.quizAnswers)[i];
-return v===true;
-}).length;
-
-document.getElementById('quizArea').innerHTML=html;
+document.getElementById('quizArea').innerHTML=h;
 }
 
 function answerQuiz(idx,chosen){
 const q=quizFiltered[idx];
-const key=`${idx}_${q.q.substring(0,20)}`;
-state.quizAnswers[key]=chosen;
-if(chosen===q.correct) state.quizAnswers[key+'_correct']=true;
+const qKey=`q_${q.q.substring(0,30).replace(/[^a-zA-Z0-9]/g,'')}`;
+state.quizAnswers[qKey]=chosen;
+state.quizAnswers[qKey+'_ok']=(chosen===q.correct);
 saveState();
-quizAnswered=true;
-renderQuiz();
+// Re-render immediately with the answer shown
+const opts=document.querySelectorAll('.quiz-option');
+opts.forEach((btn,i)=>{
+btn.disabled=true;
+if(i===q.correct) btn.classList.add('correct');
+else if(i===chosen) btn.classList.add('wrong');
+});
+const expEl=document.querySelector('.quiz-explanation');
+if(expEl) expEl.style.display='block';
 }
 
 // ═══════════════════════════════════════
@@ -1797,8 +1797,8 @@ function renderProgress(){
 if(currentUser) document.getElementById('progressUser').textContent='Logado como: '+currentUser;
 const studied=Object.keys(state.studied).length;
 const total=TOPICS.length;
-const answered=Object.keys(state.quizAnswers).filter(k=>!k.endsWith('_correct')).length;
-const correct=Object.keys(state.quizAnswers).filter(k=>k.endsWith('_correct')).length;
+const answered=Object.keys(state.quizAnswers).filter(k=>!k.endsWith('_ok')).length;
+const correct=Object.values(state.quizAnswers).filter((v,i)=>{const k=Object.keys(state.quizAnswers)[i];return k.endsWith('_ok')&&v===true;}).length;
 
 let html=`<div class="quiz-score">
 <div class="quiz-score-item"><div class="num" style="color:var(--acc)">${studied}</div><div class="label">Temas Estudados</div></div>
