@@ -84,7 +84,9 @@
         "q_Qualaclassificaoeconduta": 1,
         "q_Qualaclassificaoeconduta_ok": true,
         "q_Avaliaodaperdadepeso": 0,
-        "q_Avaliaodaperdadepeso_ok": true
+        "q_Avaliaodaperdadepeso_ok": true,
+        "q_Interpretaoeconduta": 2,
+        "q_Interpretaoeconduta_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
