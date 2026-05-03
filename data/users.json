@@ -1,26 +1,26 @@
 {
   "guilherme0099": {
-    "pw": "74560b926d6f6b292762783011e796b25e366495c84d54427ca2ec6ddc7c4eca",
-    "state": {
-      "studied": {
-        "epidemio": true,
-        "aps_mfc": true,
-        "consulta7": true,
-        "sono": true,
-        "promocao": true,
-        "nutricao": true,
-        "respiratorio": true,
-        "aidpi": true,
-        "puericultura": true,
-        "sazonalidade": true,
-        "estudos_epi": true,
-        "has": true,
-        "preconcepcional": true
-      },
-      "quizAnswers": {},
-      "fcIndex": 0,
-      "currentFilter": "Todos"
-    }
+    "studied": {
+      "epidemio": true,
+      "aps_mfc": true,
+      "consulta7": true,
+      "sono": true,
+      "promocao": true,
+      "nutricao": true,
+      "respiratorio": true,
+      "aidpi": true,
+      "puericultura": true,
+      "sazonalidade": true,
+      "estudos_epi": true,
+      "has": true,
+      "preconcepcional": true
+    },
+    "quizAnswers": {
+      "0_Qual o diagnóstico m": 1,
+      "0_Qual o diagnóstico m_correct": true
+    },
+    "fcIndex": 0,
+    "currentFilter": "Todos"
   },
   "emiefice": {
     "pw": "d4c27cce6bac343779503cf90eb7f271f6c4ef274e62601d5b1fd19ebe611fcb",
