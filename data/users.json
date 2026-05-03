@@ -78,7 +78,9 @@
         "q_Classificaoeconduta": 2,
         "q_Classificaoeconduta_ok": true,
         "q_Qualaorientaocorretasobr": 2,
-        "q_Qualaorientaocorretasobr_ok": true
+        "q_Qualaorientaocorretasobr_ok": true,
+        "q_QualacondutasegundoAIDPI": 1,
+        "q_QualacondutasegundoAIDPI_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
