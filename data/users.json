@@ -10,7 +10,8 @@
         "promocao": true,
         "nutricao": true,
         "respiratorio": true,
-        "aidpi": true
+        "aidpi": true,
+        "puericultura": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
