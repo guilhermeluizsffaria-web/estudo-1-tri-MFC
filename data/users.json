@@ -16,14 +16,23 @@
       "preconcepcional": true
     },
     "quizAnswers": {
-      "0_Qual o diagnóstico m": 1,
-      "0_Qual o diagnóstico m_correct": true
+      "0_Qual o diagnÃ³stico m": 1,
+      "0_Qual o diagnÃ³stico m_correct": true
     },
     "fcIndex": 0,
     "currentFilter": "Todos"
   },
   "emiefice": {
     "pw": "d4c27cce6bac343779503cf90eb7f271f6c4ef274e62601d5b1fd19ebe611fcb",
+    "state": {
+      "studied": {},
+      "quizAnswers": {},
+      "fcIndex": 0,
+      "currentFilter": "Todos"
+    }
+  },
+  "amoralucas": {
+    "pw": "7e202fef13af418c274fec40a78ab45096d1959ece192d9edf8d3d8436f49e92",
     "state": {
       "studied": {},
       "quizAnswers": {},
