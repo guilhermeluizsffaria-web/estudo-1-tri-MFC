@@ -76,7 +76,9 @@
         "q_Qualacomplicaoecondutai": 1,
         "q_Qualacomplicaoecondutai_ok": true,
         "q_Classificaoeconduta": 2,
-        "q_Classificaoeconduta_ok": true
+        "q_Classificaoeconduta_ok": true,
+        "q_Qualaorientaocorretasobr": 2,
+        "q_Qualaorientaocorretasobr_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
