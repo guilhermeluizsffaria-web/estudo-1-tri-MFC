@@ -16,8 +16,8 @@
       "preconcepcional": true
     },
     "quizAnswers": {
-      "0_Qual o diagnÃÂÃÂ³stico m": 1,
-      "0_Qual o diagnÃÂÃÂ³stico m_correct": true
+      "0_Qual o diagnÃÂÃÂÃÂÃÂ³stico m": 1,
+      "0_Qual o diagnÃÂÃÂÃÂÃÂ³stico m_correct": true
     },
     "fcIndex": 0,
     "currentFilter": "Todos"
@@ -50,6 +50,15 @@
     }
   },
   "teste": {
+    "pw": "74560b926d6f6b292762783011e796b25e366495c84d54427ca2ec6ddc7c4eca",
+    "state": {
+      "studied": {},
+      "quizAnswers": {},
+      "fcIndex": 0,
+      "currentFilter": "Todos"
+    }
+  },
+  "guilu0099": {
     "pw": "74560b926d6f6b292762783011e796b25e366495c84d54427ca2ec6ddc7c4eca",
     "state": {
       "studied": {},
