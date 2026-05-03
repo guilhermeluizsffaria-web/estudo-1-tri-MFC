@@ -11,7 +11,8 @@
         "nutricao": true,
         "respiratorio": true,
         "aidpi": true,
-        "puericultura": true
+        "puericultura": true,
+        "sazonalidade": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
