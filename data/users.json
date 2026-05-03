@@ -64,7 +64,9 @@
       "studied": {},
       "quizAnswers": {
         "q_ClassificaoAIDPIeconduta": 1,
-        "q_ClassificaoAIDPIeconduta_ok": false
+        "q_ClassificaoAIDPIeconduta_ok": false,
+        "q_Diagnsticoeconduta": 0,
+        "q_Diagnsticoeconduta_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
