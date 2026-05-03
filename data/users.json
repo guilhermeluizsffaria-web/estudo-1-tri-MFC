@@ -80,7 +80,9 @@
         "q_Qualaorientaocorretasobr": 2,
         "q_Qualaorientaocorretasobr_ok": true,
         "q_QualacondutasegundoAIDPI": 1,
-        "q_QualacondutasegundoAIDPI_ok": false
+        "q_QualacondutasegundoAIDPI_ok": false,
+        "q_Qualaclassificaoeconduta": 1,
+        "q_Qualaclassificaoeconduta_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos"
