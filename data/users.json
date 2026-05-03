@@ -21,5 +21,14 @@
       "fcIndex": 0,
       "currentFilter": "Todos"
     }
+  },
+  "emiefice": {
+    "pw": "d4c27cce6bac343779503cf90eb7f271f6c4ef274e62601d5b1fd19ebe611fcb",
+    "state": {
+      "studied": {},
+      "quizAnswers": {},
+      "fcIndex": 0,
+      "currentFilter": "Todos"
+    }
   }
 }
