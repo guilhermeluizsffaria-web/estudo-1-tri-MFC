@@ -16,8 +16,8 @@
       "preconcepcional": true
     },
     "quizAnswers": {
-      "0_Qual o diagnÃ³stico m": 1,
-      "0_Qual o diagnÃ³stico m_correct": true
+      "0_Qual o diagnÃÂ³stico m": 1,
+      "0_Qual o diagnÃÂ³stico m_correct": true
     },
     "fcIndex": 0,
     "currentFilter": "Todos"
@@ -33,6 +33,15 @@
   },
   "amoralucas": {
     "pw": "7e202fef13af418c274fec40a78ab45096d1959ece192d9edf8d3d8436f49e92",
+    "state": {
+      "studied": {},
+      "quizAnswers": {},
+      "fcIndex": 0,
+      "currentFilter": "Todos"
+    }
+  },
+  "thay": {
+    "pw": "444ba6334999e53e7c7732d155d3e193646abb96c9c19b1223659f839e08dc62",
     "state": {
       "studied": {},
       "quizAnswers": {},
