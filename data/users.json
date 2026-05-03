@@ -4,7 +4,8 @@
     "state": {
       "studied": {
         "epidemio": true,
-        "aps_mfc": true
+        "aps_mfc": true,
+        "consulta7": true
       },
       "quizAnswers": {},
       "fcIndex": 0,
