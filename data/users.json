@@ -123,7 +123,9 @@
         "q_Qualoprincipalerrodestaco": 2,
         "q_Qualoprincipalerrodestaco_ok": true,
         "q_Seotestederpositivoqual": 2,
-        "q_Seotestederpositivoqual_ok": true
+        "q_Seotestederpositivoqual_ok": true,
+        "q_Qualainterpretaoclnicad": 1,
+        "q_Qualainterpretaoclnicad_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
