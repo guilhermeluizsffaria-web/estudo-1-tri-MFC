@@ -131,7 +131,9 @@
         "q_Qualusarpararastreamentoe": 0,
         "q_Qualusarpararastreamentoe_ok": true,
         "q_Interpretaocorreta": 2,
-        "q_Interpretaocorreta_ok": true
+        "q_Interpretaocorreta_ok": true,
+        "q_Interpretao": 2,
+        "q_Interpretao_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
