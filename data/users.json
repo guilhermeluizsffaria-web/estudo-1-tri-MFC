@@ -107,7 +107,10 @@
       "studied": {
         "epidemio": true
       },
-      "quizAnswers": {},
+      "quizAnswers": {
+        "q_QualcondioNOcritriod": 0,
+        "q_QualcondioNOcritriod_ok": true
+      },
       "fcIndex": 0,
       "currentFilter": "Todos",
       "quizFilter": "Epidemiologia"
