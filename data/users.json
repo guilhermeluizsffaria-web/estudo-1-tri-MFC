@@ -165,7 +165,9 @@
         "q_CondutadoMFC": 1,
         "q_CondutadoMFC_ok": true,
         "q_QualatributoderivadodaAPS": 2,
-        "q_QualatributoderivadodaAPS_ok": true
+        "q_QualatributoderivadodaAPS_ok": true,
+        "q_Oqueessasituaoilustra": 1,
+        "q_Oqueessasituaoilustra_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
