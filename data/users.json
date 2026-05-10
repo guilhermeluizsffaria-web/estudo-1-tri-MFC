@@ -161,7 +161,9 @@
         "q_Qualestratgiapriorizar": 0,
         "q_Qualestratgiapriorizar_ok": true,
         "q_Comoabordar": 2,
-        "q_Comoabordar_ok": true
+        "q_Comoabordar_ok": true,
+        "q_CondutadoMFC": 1,
+        "q_CondutadoMFC_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
