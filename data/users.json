@@ -117,7 +117,9 @@
         "q_Qualomelhordesenhodeestud": 3,
         "q_Qualomelhordesenhodeestud_ok": true,
         "q_Qualotipodeestudo": 2,
-        "q_Qualotipodeestudo_ok": true
+        "q_Qualotipodeestudo_ok": true,
+        "q_Tipodeestudoemedidadeass": 0,
+        "q_Tipodeestudoemedidadeass_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
