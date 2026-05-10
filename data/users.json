@@ -139,7 +139,9 @@
         "q_CondutamaisadequadadoDrC": 2,
         "q_CondutamaisadequadadoDrC_ok": true,
         "q_Qualaoexemplificapreven": 1,
-        "q_Qualaoexemplificapreven_ok": true
+        "q_Qualaoexemplificapreven_ok": true,
+        "q_QualatributodaAPSestsend": 0,
+        "q_QualatributodaAPSestsend_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
