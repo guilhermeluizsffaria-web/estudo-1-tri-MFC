@@ -141,7 +141,9 @@
         "q_Qualaoexemplificapreven": 1,
         "q_Qualaoexemplificapreven_ok": true,
         "q_QualatributodaAPSestsend": 0,
-        "q_QualatributodaAPSestsend_ok": false
+        "q_QualatributodaAPSestsend_ok": false,
+        "q_Qualconceitomelhorseaplica": 1,
+        "q_Qualconceitomelhorseaplica_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
