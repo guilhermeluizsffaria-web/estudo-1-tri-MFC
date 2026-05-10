@@ -109,7 +109,8 @@
       },
       "quizAnswers": {},
       "fcIndex": 0,
-      "currentFilter": "Todos"
+      "currentFilter": "Todos",
+      "quizFilter": "Epidemiologia"
     }
   }
 }
