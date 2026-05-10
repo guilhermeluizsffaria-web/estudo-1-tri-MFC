@@ -115,7 +115,9 @@
         "q_Essadiferenaprovaqueoras": 1,
         "q_Essadiferenaprovaqueoras_ok": true,
         "q_Qualomelhordesenhodeestud": 3,
-        "q_Qualomelhordesenhodeestud_ok": true
+        "q_Qualomelhordesenhodeestud_ok": true,
+        "q_Qualotipodeestudo": 2,
+        "q_Qualotipodeestudo_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
