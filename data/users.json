@@ -149,7 +149,9 @@
         "q_Comoabordarestasituaol": 2,
         "q_Comoabordarestasituaol_ok": true,
         "q_QualpassodaConsultaem7Pa": 0,
-        "q_QualpassodaConsultaem7Pa_ok": true
+        "q_QualpassodaConsultaem7Pa_ok": true,
+        "q_QualdimensodoMCCPestsen": 1,
+        "q_QualdimensodoMCCPestsen_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
