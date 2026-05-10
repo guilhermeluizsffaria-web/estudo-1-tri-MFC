@@ -125,7 +125,9 @@
         "q_Seotestederpositivoqual": 2,
         "q_Seotestederpositivoqual_ok": true,
         "q_Qualainterpretaoclnicad": 1,
-        "q_Qualainterpretaoclnicad_ok": true
+        "q_Qualainterpretaoclnicad_ok": true,
+        "q_Qualconceitoepidemiolgicom": 1,
+        "q_Qualconceitoepidemiolgicom_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
