@@ -157,7 +157,9 @@
         "q_Qualrastreamentodecncerco": 1,
         "q_Qualrastreamentodecncerco_ok": true,
         "q_QuandorepetiroPapanicolaou": 1,
-        "q_QuandorepetiroPapanicolaou_ok": true
+        "q_QuandorepetiroPapanicolaou_ok": true,
+        "q_Qualestratgiapriorizar": 0,
+        "q_Qualestratgiapriorizar_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
