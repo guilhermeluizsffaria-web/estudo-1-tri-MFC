@@ -143,7 +143,9 @@
         "q_QualatributodaAPSestsend": 0,
         "q_QualatributodaAPSestsend_ok": false,
         "q_Qualconceitomelhorseaplica": 1,
-        "q_Qualconceitomelhorseaplica_ok": true
+        "q_Qualconceitomelhorseaplica_ok": true,
+        "q_MelhorabordagemdoMFC": 1,
+        "q_MelhorabordagemdoMFC_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
