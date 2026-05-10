@@ -105,7 +105,8 @@
     "pw": "29c24b6883169550eb65d35ff6935ab825531d6fde0415235cc3dde15535d948",
     "state": {
       "studied": {
-        "epidemio": true
+        "epidemio": true,
+        "estudos_epi": true
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
