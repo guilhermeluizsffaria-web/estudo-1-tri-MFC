@@ -159,7 +159,9 @@
         "q_QuandorepetiroPapanicolaou": 1,
         "q_QuandorepetiroPapanicolaou_ok": true,
         "q_Qualestratgiapriorizar": 0,
-        "q_Qualestratgiapriorizar_ok": true
+        "q_Qualestratgiapriorizar_ok": true,
+        "q_Comoabordar": 2,
+        "q_Comoabordar_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
