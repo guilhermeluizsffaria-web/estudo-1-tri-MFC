@@ -153,7 +153,9 @@
         "q_QualdimensodoMCCPestsen": 1,
         "q_QualdimensodoMCCPestsen_ok": true,
         "q_Qualrastreamentoestindicad": 2,
-        "q_Qualrastreamentoestindicad_ok": true
+        "q_Qualrastreamentoestindicad_ok": true,
+        "q_Qualrastreamentodecncerco": 1,
+        "q_Qualrastreamentodecncerco_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
