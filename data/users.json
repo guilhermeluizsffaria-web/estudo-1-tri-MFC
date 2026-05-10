@@ -113,7 +113,9 @@
         "q_Qualvisdanodorastreamento": 2,
         "q_Qualvisdanodorastreamento_ok": true,
         "q_Essadiferenaprovaqueoras": 1,
-        "q_Essadiferenaprovaqueoras_ok": true
+        "q_Essadiferenaprovaqueoras_ok": true,
+        "q_Qualomelhordesenhodeestud": 3,
+        "q_Qualomelhordesenhodeestud_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
