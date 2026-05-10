@@ -107,7 +107,8 @@
       "studied": {
         "epidemio": true,
         "estudos_epi": true,
-        "aps_mfc": true
+        "aps_mfc": true,
+        "consulta7": true
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
