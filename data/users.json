@@ -109,7 +109,9 @@
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
-        "q_QualcondioNOcritriod_ok": true
+        "q_QualcondioNOcritriod_ok": true,
+        "q_Qualvisdanodorastreamento": 2,
+        "q_Qualvisdanodorastreamento_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
