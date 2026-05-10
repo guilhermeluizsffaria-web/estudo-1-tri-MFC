@@ -147,7 +147,9 @@
         "q_MelhorabordagemdoMFC": 1,
         "q_MelhorabordagemdoMFC_ok": true,
         "q_Comoabordarestasituaol": 2,
-        "q_Comoabordarestasituaol_ok": true
+        "q_Comoabordarestasituaol_ok": true,
+        "q_QualpassodaConsultaem7Pa": 0,
+        "q_QualpassodaConsultaem7Pa_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
