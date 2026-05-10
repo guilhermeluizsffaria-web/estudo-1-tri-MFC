@@ -137,7 +137,9 @@
         "q_Interpretao": 2,
         "q_Interpretao_ok": true,
         "q_CondutamaisadequadadoDrC": 2,
-        "q_CondutamaisadequadadoDrC_ok": true
+        "q_CondutamaisadequadadoDrC_ok": true,
+        "q_Qualaoexemplificapreven": 1,
+        "q_Qualaoexemplificapreven_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
