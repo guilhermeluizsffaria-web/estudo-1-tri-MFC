@@ -106,7 +106,8 @@
     "state": {
       "studied": {
         "epidemio": true,
-        "estudos_epi": true
+        "estudos_epi": true,
+        "aps_mfc": true
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
