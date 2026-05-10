@@ -119,7 +119,9 @@
         "q_Qualotipodeestudo": 2,
         "q_Qualotipodeestudo_ok": true,
         "q_Tipodeestudoemedidadeass": 0,
-        "q_Tipodeestudoemedidadeass_ok": false
+        "q_Tipodeestudoemedidadeass_ok": false,
+        "q_Qualoprincipalerrodestaco": 2,
+        "q_Qualoprincipalerrodestaco_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
