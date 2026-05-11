@@ -108,7 +108,8 @@
         "epidemio": true,
         "estudos_epi": true,
         "aps_mfc": true,
-        "consulta7": true
+        "consulta7": true,
+        "sono": true
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
