@@ -213,7 +213,9 @@
         "q_Diagnsticomaisprovvel": 2,
         "q_Diagnsticomaisprovvel_ok": true,
         "q_ClassificaoAIDPIparatosse": 2,
-        "q_ClassificaoAIDPIparatosse_ok": true
+        "q_ClassificaoAIDPIparatosse_ok": true,
+        "q_Qualadosecorreta": 1,
+        "q_Qualadosecorreta_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
