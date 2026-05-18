@@ -201,7 +201,9 @@
         "q_CondutaquantoBCG": 1,
         "q_CondutaquantoBCG_ok": false,
         "q_Recomendaodesuplementao": 2,
-        "q_Recomendaodesuplementao_ok": false
+        "q_Recomendaodesuplementao_ok": false,
+        "q_Qualahiptesediagnsticama": 1,
+        "q_Qualahiptesediagnsticama_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
