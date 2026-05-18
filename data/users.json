@@ -209,7 +209,9 @@
         "q_Avaliaododesenvolvimento": 1,
         "q_Avaliaododesenvolvimento_ok": true,
         "q_ClassificaoAIDPI": 1,
-        "q_ClassificaoAIDPI_ok": true
+        "q_ClassificaoAIDPI_ok": true,
+        "q_Diagnsticomaisprovvel": 2,
+        "q_Diagnsticomaisprovvel_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
