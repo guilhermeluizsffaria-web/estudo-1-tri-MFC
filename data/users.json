@@ -207,7 +207,9 @@
         "q_Conduta": 1,
         "q_Conduta_ok": true,
         "q_Avaliaododesenvolvimento": 1,
-        "q_Avaliaododesenvolvimento_ok": true
+        "q_Avaliaododesenvolvimento_ok": true,
+        "q_ClassificaoAIDPI": 1,
+        "q_ClassificaoAIDPI_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
