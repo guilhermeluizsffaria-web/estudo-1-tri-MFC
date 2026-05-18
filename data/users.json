@@ -197,7 +197,9 @@
         "q_Orientaosobreleitedevaca": 1,
         "q_Orientaosobreleitedevaca_ok": true,
         "q_Oqueafontanelaabauladasug": 2,
-        "q_Oqueafontanelaabauladasug_ok": true
+        "q_Oqueafontanelaabauladasug_ok": true,
+        "q_CondutaquantoBCG": 1,
+        "q_CondutaquantoBCG_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
