@@ -177,7 +177,9 @@
         "q_Interpretaoeconduta": 1,
         "q_Interpretaoeconduta_ok": true,
         "q_Diagnsticoeconduta": 1,
-        "q_Diagnsticoeconduta_ok": true
+        "q_Diagnsticoeconduta_ok": true,
+        "q_OrientaocorretanoBrasil": 1,
+        "q_OrientaocorretanoBrasil_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
