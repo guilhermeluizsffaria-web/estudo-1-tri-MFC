@@ -203,7 +203,9 @@
         "q_Recomendaodesuplementao": 2,
         "q_Recomendaodesuplementao_ok": false,
         "q_Qualahiptesediagnsticama": 1,
-        "q_Qualahiptesediagnsticama_ok": true
+        "q_Qualahiptesediagnsticama_ok": true,
+        "q_Conduta": 1,
+        "q_Conduta_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
