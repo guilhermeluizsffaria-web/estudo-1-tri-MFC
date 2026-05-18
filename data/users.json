@@ -187,7 +187,9 @@
         "q_ClassificaoAIDPIeplanote": 1,
         "q_ClassificaoAIDPIeplanote_ok": true,
         "q_Classificaoeconduta": 1,
-        "q_Classificaoeconduta_ok": true
+        "q_Classificaoeconduta_ok": true,
+        "q_CondutasegundoAIDPI": 1,
+        "q_CondutasegundoAIDPI_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
