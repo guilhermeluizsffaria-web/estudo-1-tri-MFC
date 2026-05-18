@@ -215,7 +215,9 @@
         "q_ClassificaoAIDPIparatosse": 2,
         "q_ClassificaoAIDPIparatosse_ok": true,
         "q_Qualadosecorreta": 1,
-        "q_Qualadosecorreta_ok": true
+        "q_Qualadosecorreta_ok": true,
+        "q_Orientaosobreantihelmnti": 1,
+        "q_Orientaosobreantihelmnti_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
