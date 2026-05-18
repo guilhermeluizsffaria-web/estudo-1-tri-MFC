@@ -189,7 +189,9 @@
         "q_Classificaoeconduta": 1,
         "q_Classificaoeconduta_ok": true,
         "q_CondutasegundoAIDPI": 1,
-        "q_CondutasegundoAIDPI_ok": true
+        "q_CondutasegundoAIDPI_ok": true,
+        "q_ClassificaoecondutaAIDPI": 0,
+        "q_ClassificaoecondutaAIDPI_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
