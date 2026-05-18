@@ -199,7 +199,9 @@
         "q_Oqueafontanelaabauladasug": 2,
         "q_Oqueafontanelaabauladasug_ok": true,
         "q_CondutaquantoBCG": 1,
-        "q_CondutaquantoBCG_ok": false
+        "q_CondutaquantoBCG_ok": false,
+        "q_Recomendaodesuplementao": 2,
+        "q_Recomendaodesuplementao_ok": false
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
