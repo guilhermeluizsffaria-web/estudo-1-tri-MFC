@@ -211,7 +211,9 @@
         "q_ClassificaoAIDPI": 1,
         "q_ClassificaoAIDPI_ok": true,
         "q_Diagnsticomaisprovvel": 2,
-        "q_Diagnsticomaisprovvel_ok": true
+        "q_Diagnsticomaisprovvel_ok": true,
+        "q_ClassificaoAIDPIparatosse": 2,
+        "q_ClassificaoAIDPIparatosse_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
