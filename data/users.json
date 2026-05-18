@@ -193,7 +193,9 @@
         "q_ClassificaoecondutaAIDPI": 0,
         "q_ClassificaoecondutaAIDPI_ok": false,
         "q_ClassificaoAIDPIdodesenvo": 3,
-        "q_ClassificaoAIDPIdodesenvo_ok": true
+        "q_ClassificaoAIDPIdodesenvo_ok": true,
+        "q_Orientaosobreleitedevaca": 1,
+        "q_Orientaosobreleitedevaca_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
