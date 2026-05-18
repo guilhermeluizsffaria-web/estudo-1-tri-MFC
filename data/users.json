@@ -205,7 +205,9 @@
         "q_Qualahiptesediagnsticama": 1,
         "q_Qualahiptesediagnsticama_ok": true,
         "q_Conduta": 1,
-        "q_Conduta_ok": true
+        "q_Conduta_ok": true,
+        "q_Avaliaododesenvolvimento": 1,
+        "q_Avaliaododesenvolvimento_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
