@@ -111,7 +111,8 @@
         "consulta7": true,
         "sono": true,
         "promocao": true,
-        "nutricao": true
+        "nutricao": true,
+        "respiratorio": true
       },
       "quizAnswers": {
         "q_QualcondioNOcritriod": 0,
