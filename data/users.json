@@ -185,7 +185,9 @@
         "q_Esquemadesuplementaodefe": 1,
         "q_Esquemadesuplementaodefe_ok": true,
         "q_ClassificaoAIDPIeplanote": 1,
-        "q_ClassificaoAIDPIeplanote_ok": true
+        "q_ClassificaoAIDPIeplanote_ok": true,
+        "q_Classificaoeconduta": 1,
+        "q_Classificaoeconduta_ok": true
       },
       "fcIndex": 0,
       "currentFilter": "Todos",
